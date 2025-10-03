@@ -30,7 +30,7 @@ async function syncUser() {
     // Create user in Neon database with same ID as Supabase
     const newUser = await prisma.user.create({
       data: {
-        id: authUser.id, // Use Supabase's user ID
+        id: authUser.id,
         email: authUser.email!,
         name: authUser.user_metadata?.name || null,
         avatarUrl: authUser.user_metadata?.avatar_url || null,

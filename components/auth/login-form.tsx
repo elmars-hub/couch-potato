@@ -29,7 +29,7 @@ export function LoginForm() {
     const { error: loginError } = await signIn(email, password);
 
     if (loginError) {
-      setError(loginError.message || 'Login failed');
+      setError(loginError.message || "Login failed");
     }
   };
 
@@ -68,7 +68,11 @@ export function LoginForm() {
               {error}
             </div>
           )}
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full cursor-pointer"
+            disabled={isLoading}
+          >
             {isLoading ? "Logging in..." : "Log in"}
           </Button>
           <p className="text-sm text-center text-muted-foreground">
