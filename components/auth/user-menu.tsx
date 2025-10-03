@@ -1,6 +1,5 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,9 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { User, LogOut, Heart, Bookmark } from "lucide-react";
+import { getAvatarUrl, getInitials } from "@/lib/avatar";
+import { useAuth } from "@/lib/auth-context";
 
 interface UserMenuProps {
   user: {
@@ -24,32 +25,22 @@ interface UserMenuProps {
 
 export function UserMenu({ user }: UserMenuProps) {
   const router = useRouter();
+  const { signOut } = useAuth();
 
   const handleSignOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    console.log("[v0] User signed out");
-    router.push("/");
-    router.refresh();
+    await signOut();
   };
 
-  const getInitials = (name: string | null, email: string) => {
-    if (name) {
-      return name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return email[0].toUpperCase();
-  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar>
+            <AvatarImage 
+              src={getAvatarUrl(user.email)} 
+              alt={`${user.name || user.email}'s avatar`}
+            />
             <AvatarFallback>
               {getInitials(user.name, user.email)}
             </AvatarFallback>

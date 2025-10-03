@@ -9,7 +9,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Heart, Bookmark, User } from "lucide-react";
+import { Heart, Bookmark } from "lucide-react";
+import { ProfileForm } from "@/components/profile/profile-form";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarUrl, getInitials } from "@/lib/avatar";
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -29,6 +32,9 @@ export default async function ProfilePage() {
             </p>
           </div>
 
+          {/* Profile Update Form */}
+          <ProfileForm user={user} />
+
           <Card>
             <CardHeader>
               <CardTitle>Account Information</CardTitle>
@@ -36,9 +42,15 @@ export default async function ProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="h-8 w-8 text-primary" />
-                </div>
+                <Avatar className="h-16 w-16">
+                  <AvatarImage
+                    src={getAvatarUrl(user.email, 64)}
+                    alt={`${user.name || user.email}'s avatar`}
+                  />
+                  <AvatarFallback className="text-lg">
+                    {getInitials(user.name, user.email)}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <p className="font-semibold">{user.name || "User"}</p>
                   <p className="text-sm text-muted-foreground">{user.email}</p>

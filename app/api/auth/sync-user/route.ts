@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+async function syncUser() {
   try {
     const supabase = await createClient();
 
@@ -42,4 +42,12 @@ export async function POST(request: Request) {
     console.error("Error syncing user:", error);
     return NextResponse.json({ error: "Failed to sync user" }, { status: 500 });
   }
+}
+
+export async function GET() {
+  return syncUser();
+}
+
+export async function POST() {
+  return syncUser();
 }
