@@ -1,5 +1,5 @@
-import Navbar from "@/components/navbar";
-import HeroCarousel from "@/components/herocarousel";
+import Navbar from "@/components/navbar/navbar";
+import HeroCarousel from "@/components/main/herocarousel";
 
 export default function HomePage() {
   return (

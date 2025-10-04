@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 const GeistSans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const GeistMono = Inter({ subsets: ["latin"], variable: "--font-mono" });
-import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -24,9 +23,7 @@ export default function RootLayout({
       <body
         className={`font-sans ${GeistSans.variable} ${GeistMono.variable} bg-[#141414] text-white antialiased overflow-hidden`}
       >
-        <Providers>
-          <Suspense fallback={null}>{children}</Suspense>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
