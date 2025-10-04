@@ -74,9 +74,9 @@ const NavbarActions = ({ user, isLoading }: NavbarActionsProps) => {
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
               <User className="w-4 h-4 text-white" />
             </div>
-            <span className="text-white font-medium text-sm max-w-[100px] truncate">
+            {/* <span className="text-white font-medium text-sm max-w-[100px] truncate">
               {user.email?.split("@")[0] || "User"}
-            </span>
+            </span> */}
           </motion.button>
 
           <AnimatePresence>

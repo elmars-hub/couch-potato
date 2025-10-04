@@ -10,7 +10,6 @@ import MobileMenuButton from "./menuButton";
 import MobileMenu from "./mobileMenu";
 import { useAuth } from "@/lib/auth-context";
 
-// Match the hero carousel max width
 const MAX_CONTENT_WIDTH = "max-w-[1800px]";
 
 const Navbar = () => {

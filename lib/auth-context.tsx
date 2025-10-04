@@ -1,13 +1,14 @@
 "use client";
 
-import axios, { AxiosError } from "axios";
+import type React from "react";
 
+import axios, { type AxiosError } from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
-import { AuthUser, AuthContextType } from "@/types/auth";
+import type { AuthUser, AuthContextType } from "@/types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -15,33 +16,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Fetch user from Supabase + sync with database
-  const {
-    data: user,
-    isLoading,
-    refetch: refetchUser,
-  } = useQuery({
-    queryKey: ["auth-user"],
-    queryFn: async (): Promise<AuthUser | null> => {
-      if (!supabaseUser) return null;
-
-      try {
-        const { data } = await axios.get("/api/auth/sync-user");
-
-        return data.user;
-      } catch (error) {
-        console.error("Failed to sync user", error);
-        return null;
-      }
-    },
-    enabled: !!supabaseUser,
-    // staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  // Listen for Supabase auth changes
   useEffect(() => {
     const supabase = createClient();
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSupabaseUser(session?.user ?? null);
+      setIsHydrated(true);
+    });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
@@ -57,7 +41,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [queryClient]);
 
-  // React Query mutations
+  const {
+    data: user,
+    isLoading,
+    refetch: refetchUser,
+  } = useQuery({
+    queryKey: ["auth-user"],
+    queryFn: async (): Promise<AuthUser | null> => {
+      if (!supabaseUser) return null;
+
+      try {
+        const { data } = await axios.get("/api/auth/sync-user");
+        return data.user;
+      } catch (error) {
+        console.error("Failed to sync user", error);
+        return null;
+      }
+    },
+    enabled: !!supabaseUser && isHydrated,
+    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
+    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnMount: false, // Don't refetch on component mount
+  });
+
   const signInMutation = useMutation({
     mutationFn: async ({
       email,
@@ -133,10 +140,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth-user"] }),
   });
 
-  // Context value
   const contextValue: AuthContextType = {
     user: user ?? null,
-    isLoading,
+    isLoading: !isHydrated || isLoading,
     signIn: async (email, password) => {
       try {
         await signInMutation.mutateAsync({ email, password });

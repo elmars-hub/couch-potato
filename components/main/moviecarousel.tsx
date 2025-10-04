@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Play, Info } from "lucide-react";
-import { useNowPlayingMovies } from "@/hooks/useMovies";
 import { getImageUrl } from "@/lib/tmdb";
 
 const MAX_CONTENT_WIDTH_CLASS = "max-w-[1800px]";
@@ -29,11 +28,11 @@ interface MoviesResponse {
   total_results: number;
 }
 
-interface HeroCarouselProps {
+interface MovieCarouselProps {
   movies: MoviesResponse;
 }
 
-export function HeroCarousel({ movies }: HeroCarouselProps) {
+export function MovieCarousel({ movies }: MovieCarouselProps) {
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -135,7 +134,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
             {/* Featured badge */}
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded">
-                Now Playing
+                Trending Movies
               </span>
               <span className="text-gray-300 text-sm">
                 {index + 1} / {displayMovies.length}

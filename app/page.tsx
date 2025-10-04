@@ -1,11 +1,13 @@
 import Navbar from "@/components/navbar/navbar";
-import HeroCarousel from "@/components/main/herocarousel";
+import { HeroCarousel } from "@/components/main/herocarousel";
+import { getNowPlayingMovies } from "@/lib/tmdb";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const movies = await getNowPlayingMovies();
+
   return (
     <main className="mx-auto ">
-      <Navbar />
-      <HeroCarousel />
+      <HeroCarousel movies={movies} />
     </main>
   );
 }

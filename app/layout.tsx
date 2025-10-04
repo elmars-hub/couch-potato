@@ -6,6 +6,7 @@ const GeistSans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const GeistMono = Inter({ subsets: ["latin"], variable: "--font-mono" });
 import "./globals.css";
 import { Providers } from "./providers";
+import Navbar from "@/components/navbar/navbar";
 
 export const metadata: Metadata = {
   title: "Couch Potato",
@@ -23,7 +24,11 @@ export default function RootLayout({
       <body
         className={`font-sans ${GeistSans.variable} ${GeistMono.variable} bg-[#141414] text-white antialiased overflow-hidden`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navbar />
+
+          {children}
+        </Providers>
       </body>
     </html>
   );
