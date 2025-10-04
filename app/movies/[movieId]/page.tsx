@@ -10,8 +10,8 @@ import {
   Cast,
   Video,
 } from "@/hooks/useMedia";
-import { FavoriteButton } from "@/components/favoriteButton";
-import WatchlistButton from "@/components/watchlistButton";
+import { FavoriteButton } from "@/components/functional/favoriteButton";
+import WatchlistButton from "@/components/functional/watchlistButton";
 
 export default function MovieDetailsPage() {
   const params = useParams();
