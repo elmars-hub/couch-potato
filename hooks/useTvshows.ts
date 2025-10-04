@@ -1,6 +1,17 @@
 // src/hooks/useTVShows.ts
 import { useQuery } from "@tanstack/react-query";
-import { getPopularTVShows, getTVShowDetails } from "@/lib/tmdb";
+import {
+  getPopularTVShows,
+  getTrendingTVShows,
+  getTVShowDetails,
+} from "@/lib/tmdb";
+
+export function useTrendingTVShows() {
+  return useQuery({
+    queryKey: ["tv", "trending"],
+    queryFn: getTrendingTVShows,
+  });
+}
 
 export function usePopularTVShows(page = 1) {
   return useQuery({

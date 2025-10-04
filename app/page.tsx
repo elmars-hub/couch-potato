@@ -1,4 +1,3 @@
-import Navbar from "@/components/navbar/navbar";
 import { HeroCarousel } from "@/components/main/herocarousel";
 import { getNowPlayingMovies } from "@/lib/tmdb";
 

@@ -60,6 +60,10 @@ export async function getTVShowDetails(id: number) {
   });
 }
 
+export async function getTrendingTVShows() {
+  return fetchTMDB("/trending/tv/week");
+}
+
 // Search
 export async function searchMulti(query: string, page = 1) {
   return fetchTMDB("/search/multi", {

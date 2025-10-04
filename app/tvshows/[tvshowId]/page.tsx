@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { getImageUrl } from "@/lib/tmdb";
 import {
   useMediaCredits,
@@ -13,27 +13,24 @@ import {
 import { FavoriteButton } from "@/components/functional/favoriteButton";
 import WatchlistButton from "@/components/functional/watchlistButton";
 
-export default function MovieDetailsPage() {
+export default function TvShowDetailsPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
-  const movieId = params.movieId as string;
-  const type = (searchParams.get("type") ?? "movie") as "movie" | "tv";
+  const tvshowId = params.tvshowId as string;
+  const type: "tv" = "tv"; // fixed for this route
 
-  // Fetch data using hooks
+  // Fetch data
   const { data: details, isLoading: loadingDetails } = useMediaDetails(
     type,
-    movieId
+    tvshowId
   );
-  const { data: credits } = useMediaCredits(type, movieId);
-  const { data: videos } = useMediaVideos(type, movieId);
+  const { data: credits } = useMediaCredits(type, tvshowId);
+  const { data: videos } = useMediaVideos(type, tvshowId);
 
-  // Handle loading / empty states
   if (loadingDetails)
     return <p className="text-white p-4 text-center">Loading...</p>;
   if (!details)
     return <p className="text-white p-4 text-center">No details found.</p>;
 
-  // Only one official trailer
   const officialTrailer = videos?.find((v: Video) => v.type === "Trailer");
 
   return (
@@ -43,9 +40,9 @@ export default function MovieDetailsPage() {
         <div className="relative h-64 sm:h-80 md:h-96 w-full">
           <Image
             src={getImageUrl(details.backdrop_path, "original")}
-            alt={details.title ?? details.name ?? "Backdrop"}
+            alt={details.name ?? "Backdrop"}
             fill
-            className="object-cover opacity-30 object-top"
+            className="object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
         </div>
@@ -57,7 +54,7 @@ export default function MovieDetailsPage() {
           <div className="w-full md:w-1/3 relative h-80 md:h-[500px] flex-shrink-0 rounded-lg overflow-hidden shadow-lg">
             <Image
               src={getImageUrl(details.poster_path)}
-              alt={details.title ?? details.name ?? "Poster"}
+              alt={details.name ?? "Poster"}
               fill
               className="object-cover rounded-lg"
             />
@@ -65,22 +62,17 @@ export default function MovieDetailsPage() {
 
           {/* Details */}
           <div className="flex-1 flex flex-col gap-4">
-            <h1 className="text-3xl sm:text-4xl font-bold">
-              {details.title ?? details.name}
-            </h1>
+            <h1 className="text-3xl sm:text-4xl font-bold">{details.name}</h1>
             <p className="text-gray-300 leading-relaxed">{details.overview}</p>
             <p className="text-gray-200">
               <strong>Genres:</strong>{" "}
-              {details.genres.map((g) => g.name).join(", ")}
+              {details.genres.map((g: any) => g.name).join(", ")}
             </p>
             <p className="text-gray-200">
-              <strong>
-                {type === "movie" ? "Release Date:" : "First Air Date:"}
-              </strong>{" "}
-              {details.release_date ?? details.first_air_date}
+              <strong>First Air Date:</strong> {details.first_air_date}
             </p>
 
-            {/* Official Trailer */}
+            {/* Trailer */}
             {officialTrailer && (
               <div>
                 <h2 className="text-2xl font-semibold mb-2">
@@ -91,7 +83,6 @@ export default function MovieDetailsPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 transition"
-                  aria-label={`Watch trailer: ${officialTrailer.name}`}
                 >
                   {officialTrailer.name}
                 </a>
