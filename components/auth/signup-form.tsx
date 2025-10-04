@@ -1,25 +1,17 @@
 "use client";
 
-import type React from "react";
-
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Link from "next/link";
+import { Film } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
 export function SignupForm() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const { signUp, isLoading } = useAuth();
 
@@ -35,63 +27,107 @@ export function SignupForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Enter your details to get started</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSignup} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+    <div className="glass-panel p-8 rounded-2xl animate-scale-in shadow-2xl">
+      {/* Logo */}
+      <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl cinematic-gradient flex items-center justify-center animate-glow">
+            <Film className="w-7 h-7 text-white" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <h1 className="text-3xl font-bold text-gradient">Couch Potato</h1>
+        </div>
+      </div>
+
+      {/* Title */}
+      <div className="text-center mb-3">
+        <h2 className="text-2xl font-bold text-foreground mb-2">
+          Create Account
+        </h2>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSignup} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="name" className="text-foreground">
+            Name
+          </Label>
+          <Input
+            id="name"
+            type="text"
+            placeholder="John Doe"
+            className="glass-input h-12"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-foreground">
+            Email
+          </Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="you@example.com"
+            className="glass-input h-12"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-foreground">
+            Password
+          </Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            className="glass-input h-12"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+          />
+        </div>
+
+        {error && (
+          <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+            {error}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-            />
-          </div>
-          {error && (
-            <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-              {error}
-            </div>
-          )}
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Creating account..." : "Sign up"}
-          </Button>
-          <p className="text-sm text-center text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
-              Log in
-            </Link>
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+        )}
+
+        <Button
+          type="submit"
+          className="w-full h-12 cinematic-gradient hover:opacity-90 transition-opacity text-white font-semibold text-base"
+          disabled={isLoading}
+        >
+          {isLoading ? "Creating account..." : "Sign Up"}
+        </Button>
+      </form>
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border/50" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      {/* Login Link */}
+      <p className="text-center text-muted-foreground">
+        Already have an account?{" "}
+        <Link
+          href="/login"
+          className="text-secondary hover:text-secondary/80 font-semibold transition-colors"
+        >
+          Log in
+        </Link>
+      </p>
+    </div>
   );
 }
