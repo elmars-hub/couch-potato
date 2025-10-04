@@ -1,41 +1,13 @@
 "use client";
 
+import axios, { AxiosError } from "axios";
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
-
-interface AuthUser {
-  id: string;
-  email: string;
-  name: string | null;
-  avatarUrl?: string | null;
-}
-
-interface AuthError {
-  message: string;
-  status?: number;
-}
-
-interface AuthContextType {
-  user: AuthUser | null;
-  isLoading: boolean;
-  signIn: (
-    email: string,
-    password: string
-  ) => Promise<{ error: AuthError | null }>;
-  signUp: (
-    email: string,
-    password: string,
-    name: string
-  ) => Promise<{ error: AuthError | null }>;
-  signOut: () => Promise<void>;
-  updateProfile: (updates: {
-    name?: string;
-  }) => Promise<{ error: AuthError | null }>;
-  refetchUser: () => void;
-}
+import { AuthUser, AuthContextType } from "@/types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -55,17 +27,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!supabaseUser) return null;
 
       try {
-        const res = await fetch("/api/auth/sync-user");
-        if (!res.ok) throw new Error("Failed to sync user");
-        const data = await res.json();
+        const { data } = await axios.get("/api/auth/sync-user");
+
         return data.user;
       } catch (error) {
-        console.error(error);
+        console.error("Failed to sync user", error);
         return null;
       }
     },
     enabled: !!supabaseUser,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    // staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Listen for Supabase auth changes
@@ -151,16 +122,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: { name?: string }) => {
-      const res = await fetch("/api/profile", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-      });
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to update profile");
+      try {
+        const { data } = await axios.patch("/api/profile", updates);
+        return data;
+      } catch (error) {
+        const err = error as AxiosError<{ message?: string }>;
+        throw new Error(err.response?.data?.message || "Failed to update user");
       }
-      return res.json();
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth-user"] }),
   });

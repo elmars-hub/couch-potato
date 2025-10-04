@@ -1,11 +1,18 @@
-// src/hooks/useSearch.ts
+// src/hooks/useDiscover.ts
 import { useQuery } from "@tanstack/react-query";
-import { searchMulti } from "@/lib/tmdb";
+import { discoverMovies } from "@/lib/tmdb";
 
-export function useSearch(query: string, page = 1) {
+interface DiscoverParams {
+  page?: number;
+  genre?: string;
+  year?: string;
+  sort?: string;
+}
+
+export function useDiscover(params: DiscoverParams) {
   return useQuery({
-    queryKey: ["search", query, page],
-    queryFn: () => searchMulti(query, page),
-    enabled: query.length > 0,
+    queryKey: ["discover", params],
+    queryFn: () => discoverMovies(params),
+    staleTime: 1000 * 60 * 2,
   });
 }
