@@ -30,7 +30,7 @@ export function SignupForm() {
     const { error: signupError } = await signUp(email, password, name);
 
     if (signupError) {
-      setError(signupError.message || 'Signup failed');
+      setError(signupError.message || "Signup failed");
     }
   };
 

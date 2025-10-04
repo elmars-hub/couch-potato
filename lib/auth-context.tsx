@@ -6,16 +6,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
-interface AuthError {
-  message: string;
-  status?: number;
-}
-
 interface AuthUser {
   id: string;
   email: string;
   name: string | null;
   avatarUrl?: string | null;
+}
+
+interface AuthError {
+  message: string;
+  status?: number;
 }
 
 interface AuthContextType {
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
 
-  // Query to fetch user data
+  // Fetch user from Supabase + sync with database
   const {
     data: user,
     isLoading,
@@ -55,26 +55,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!supabaseUser) return null;
 
       try {
-        const response = await fetch("/api/auth/sync-user");
-        if (!response.ok) throw new Error("Failed to sync user");
-        const userData = await response.json();
-        return userData.user;
+        const res = await fetch("/api/auth/sync-user");
+        if (!res.ok) throw new Error("Failed to sync user");
+        const data = await res.json();
+        return data.user;
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error(error);
         return null;
       }
     },
     enabled: !!supabaseUser,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Listen to auth state changes
+  // Listen for Supabase auth changes
   useEffect(() => {
     const supabase = createClient();
-
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSupabaseUser(session?.user ?? null);
 
       if (event === "SIGNED_IN") {
@@ -87,7 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, [queryClient]);
 
-  // Sign in mutation
+  // React Query mutations
   const signInMutation = useMutation({
     mutationFn: async ({
       email,
@@ -101,7 +100,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
       });
-
       if (error) throw error;
       return data;
     },
@@ -110,12 +108,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/");
       router.refresh();
     },
-    onError: (error) => {
-      console.error("Sign in error:", error);
-    },
   });
 
-  // Sign up mutation
   const signUpMutation = useMutation({
     mutationFn: async ({
       email,
@@ -130,11 +124,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: { name },
-        },
+        options: { data: { name } },
       });
-
       if (error) throw error;
       return data;
     },
@@ -143,12 +134,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/");
       router.refresh();
     },
-    onError: (error) => {
-      console.error("Sign up error:", error);
-    },
   });
 
-  // Sign out mutation
   const signOutMutation = useMutation({
     mutationFn: async () => {
       const supabase = createClient();
@@ -162,73 +149,64 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     },
   });
 
-  // Update profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (updates: { name?: string }) => {
-      const response = await fetch("/api/profile", {
+      const res = await fetch("/api/profile", {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates),
       });
-
-      if (!response.ok) {
-        const error = await response.json();
+      if (!res.ok) {
+        const error = await res.json();
         throw new Error(error.message || "Failed to update profile");
       }
-
-      return response.json();
+      return res.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth-user"] }),
   });
 
+  // Context value
   const contextValue: AuthContextType = {
     user: user ?? null,
     isLoading,
-    signIn: async (
-      email: string,
-      password: string
-    ): Promise<{ error: AuthError | null }> => {
+    signIn: async (email, password) => {
       try {
         await signInMutation.mutateAsync({ email, password });
         return { error: null };
-      } catch (error) {
-        if (error instanceof Error) {
-          return { error: { message: error.message } };
-        }
-        return { error: { message: "Unknown error" } };
+      } catch (err) {
+        return {
+          error:
+            err instanceof Error
+              ? { message: err.message }
+              : { message: "Unknown error" },
+        };
       }
     },
-    signUp: async (
-      email: string,
-      password: string,
-      name: string
-    ): Promise<{ error: AuthError | null }> => {
+    signUp: async (email, password, name) => {
       try {
         await signUpMutation.mutateAsync({ email, password, name });
         return { error: null };
-      } catch (error) {
-        if (error instanceof Error) {
-          return { error: { message: error.message } };
-        }
-        return { error: { message: "Unknown error" } };
+      } catch (err) {
+        return {
+          error:
+            err instanceof Error
+              ? { message: err.message }
+              : { message: "Unknown error" },
+        };
       }
     },
-    signOut: async (): Promise<void> => {
-      await signOutMutation.mutateAsync();
-    },
-    updateProfile: async (updates): Promise<{ error: AuthError | null }> => {
+    signOut: async () => await signOutMutation.mutateAsync(),
+    updateProfile: async (updates) => {
       try {
         await updateProfileMutation.mutateAsync(updates);
         return { error: null };
-      } catch (error) {
-        if (error instanceof Error) {
-          return { error: { message: error.message } };
-        }
-        return { error: { message: "Unknown error" } };
+      } catch (err) {
+        return {
+          error:
+            err instanceof Error
+              ? { message: err.message }
+              : { message: "Unknown error" },
+        };
       }
     },
     refetchUser,
@@ -241,8 +219,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 }
