@@ -30,21 +30,18 @@ export function LoginForm() {
       {/* Logo */}
       <div className="flex items-center justify-center mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl cinematic-gradient flex items-center justify-center animate-glow">
-            <Film className="w-7 h-7 text-white" />
+          <div className="w-12 h-12 rounded-xl  flex items-center justify-center animate-glow">
+            <Film className="w-7 h-7 text-[#E50914]" />
           </div>
-          <h1 className="text-3xl font-bold text-gradient">Couch Potato</h1>
+          <h1 className="text-3xl font-bold text-[#E50914]">Couch Potato</h1>
         </div>
       </div>
 
       {/* Title */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-4">
         <h2 className="text-2xl font-bold text-foreground mb-2">
           Welcome Back
         </h2>
-        <p className="text-muted-foreground">
-          Sign in to continue your journey
-        </p>
       </div>
 
       {/* Form */}
@@ -89,10 +86,10 @@ export function LoginForm() {
 
         <Button
           type="submit"
-          className="w-full h-12 cinematic-gradient hover:opacity-90 transition-opacity text-white font-semibold text-base"
+          className="w-full h-12 bg-[#E50914] hover:bg-[#E50914]/70 cursor-pointer transition-colors duration-300 text-white font-semibold text-base"
           disabled={isLoading}
         >
-          {isLoading ? "Logging in..." : "Sign In"}
+          {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 

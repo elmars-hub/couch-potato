@@ -31,10 +31,10 @@ export function SignupForm() {
       {/* Logo */}
       <div className="flex items-center justify-center mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl cinematic-gradient flex items-center justify-center animate-glow">
-            <Film className="w-7 h-7 text-white" />
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center animate-glow">
+            <Film className="w-7 h-7 text-[#E50914]" />
           </div>
-          <h1 className="text-3xl font-bold text-gradient">Couch Potato</h1>
+          <h1 className="text-3xl font-bold text-[#E50914]">Couch Potato</h1>
         </div>
       </div>
 
@@ -101,10 +101,10 @@ export function SignupForm() {
 
         <Button
           type="submit"
-          className="w-full h-12 cinematic-gradient hover:opacity-90 transition-opacity text-white font-semibold text-base"
+          className="w-full h-12 bg-[#E50914] hover:bg-[#E50914]/70 transition-colors cursor-pointer duration-300 text-white font-semibold text-base"
           disabled={isLoading}
         >
-          {isLoading ? "Creating account..." : "Sign Up"}
+          {isLoading ? "Signing up..." : "Sign Up"}
         </Button>
       </form>
 

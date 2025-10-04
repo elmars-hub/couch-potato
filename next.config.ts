@@ -7,14 +7,8 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "image.tmdb.org",
-        pathname: "/t/p/**",
-      },
-    ],
-    unoptimized: true,
+    domains: ["image.tmdb.org"], // ✅ allow TMDB images
+    formats: ["image/avif", "image/webp"], // modern formats
   },
 };
 

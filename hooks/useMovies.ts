@@ -4,6 +4,7 @@ import {
   getTrendingMovies,
   getPopularMovies,
   getMovieDetails,
+  getNowPlayingMovies,
 } from "@/lib/tmdb";
 
 export function useTrendingMovies() {
@@ -25,6 +26,13 @@ export function useMovieDetails(id: number) {
     queryKey: ["movie", id],
     queryFn: () => getMovieDetails(id),
     enabled: !!id,
+  });
+}
+
+export function useNowPlayingMovies(page = 1) {
+  return useQuery({
+    queryKey: ["movies", "now-playing", page],
+    queryFn: () => getNowPlayingMovies(page),
   });
 }
 

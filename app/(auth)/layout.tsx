@@ -26,10 +26,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${cinzel.variable}`}>
+    <html lang="en">
       <body
         suppressHydrationWarning={true}
-        className="min-h-screen w-screen relative flex items-center justify-center p-4 overflow-hidden antialiased bg-black text-white"
+        className={`${inter.variable} ${cinzel.variable} min-h-screen w-screen relative flex items-center justify-center p-4 overflow-hidden antialiased text-white`}
       >
         <div className="absolute inset-0">
           <Image

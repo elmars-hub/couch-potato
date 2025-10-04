@@ -20,18 +20,23 @@ async function fetchTMDB(endpoint: string, params: Record<string, any> = {}) {
   }
 }
 
-// Helper for images
 export function getImageUrl(
   path: string | null,
   size: "w500" | "original" = "w500"
 ) {
   if (!path) return "/placeholder.jpg";
-  return `${imageBase}/${size}${path}`;
+  return `https://image.tmdb.org/t/p/${size}${
+    path.startsWith("/") ? path : `/${path}`
+  }`;
 }
 
 // Movies
 export async function getTrendingMovies() {
   return fetchTMDB("/trending/movie/week");
+}
+
+export async function getNowPlayingMovies(page = 1) {
+  return fetchTMDB(`/movie/now_playing?page=${page}`);
 }
 
 export async function getPopularMovies(page = 1) {
