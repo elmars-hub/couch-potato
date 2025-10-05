@@ -7,6 +7,7 @@ import { Search, Bell, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface NavbarActionsProps {
   user: any;
@@ -71,8 +72,11 @@ const NavbarActions = ({ user, isLoading }: NavbarActionsProps) => {
             onClick={() => setShowUserMenu(!showUserMenu)}
             className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all border border-white/20"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-full cursor-pointer bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
+              <Avatar className="">
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
             </div>
             {/* <span className="text-white font-medium text-sm max-w-[100px] truncate">
               {user.email?.split("@")[0] || "User"}
@@ -106,35 +110,35 @@ const NavbarActions = ({ user, isLoading }: NavbarActionsProps) => {
                   </div>
                   <div className="p-2">
                     <Link href="/profile">
-                      <button
+                      <Button
                         onClick={() => setShowUserMenu(false)}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-white hover:bg-white/10 rounded-lg transition-colors text-sm"
+                        className="w-full flex items-center cursor-pointer justify-start gap-3 px-3 py-2 text-white hover:bg-white/10 rounded-lg transition-colors text-sm"
                       >
                         <User className="w-4 h-4" />
                         Profile
-                      </button>
+                      </Button>
                     </Link>
                     <Link href="/watchlist">
-                      <button
+                      <Button
                         onClick={() => setShowUserMenu(false)}
-                        className="w-full flex items-center gap-3 px-3 py-2 text-white hover:bg-white/10 rounded-lg transition-colors text-sm"
+                        className="w-full flex items-center cursor-pointer justify-start gap-3 px-3 py-2 text-white hover:bg-white/10 rounded-lg transition-colors text-sm"
                       >
                         <Bell className="w-4 h-4" />
                         My Watchlist
-                      </button>
+                      </Button>
                     </Link>
                   </div>
                   <div className="p-2 border-t border-white/10">
-                    <button
+                    <Button
                       onClick={() => {
                         setShowUserMenu(false);
                         signOut();
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium"
+                      className="w-full flex items-center cursor-pointer justify-start gap-3 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium"
                     >
                       <LogOut className="w-4 h-4" />
                       Log Out
-                    </button>
+                    </Button>
                   </div>
                 </motion.div>
               </>

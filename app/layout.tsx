@@ -24,7 +24,12 @@ export default function RootLayout({
       >
         <Providers>{children}</Providers>
 
-        <Toaster position="top-center" reverseOrder={false} />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+          }}
+        />
       </body>
     </html>
   );
