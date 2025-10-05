@@ -11,7 +11,13 @@ import type { AuthUser, AuthContextType } from "@/types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+export function AuthProvider({
+  children,
+  initialUser,
+}: {
+  children: React.ReactNode;
+  initialUser?: AuthUser | null;
+}) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
@@ -56,7 +62,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
     },
-    enabled: !!supabaseUser && isHydrated,
+    // If we have an initial user, fetch is optional; otherwise depend on supabase state
+    enabled: !!supabaseUser && isHydrated && !initialUser,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -83,7 +90,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-user"] });
       router.push("/");
-      router.refresh();
     },
   });
 
@@ -109,7 +115,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["auth-user"] });
       router.push("/login");
-      router.refresh();
     },
   });
 
@@ -122,7 +127,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => {
       queryClient.setQueryData(["auth-user"], null);
       router.push("/");
-      router.refresh();
     },
   });
 
@@ -146,7 +150,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     updateProfileMutation.isPending;
 
   const contextValue: AuthContextType = {
-    user: user ?? null,
+    user: (initialUser ?? user) ?? null,
     isLoading: !isHydrated || userLoading,
     authLoading,
     signIn: async (email, password) => {

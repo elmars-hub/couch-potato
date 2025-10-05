@@ -82,6 +82,26 @@ export async function getTrendingTVShows() {
   return fetchTMDB("/trending/tv/week");
 }
 
+export async function discoverTv(params: {
+  page?: number;
+  genre?: string;
+  year?: string;
+  sort?: string;
+}) {
+  const { page = 1, genre, year, sort = "popularity.desc" } = params;
+  const queryParams: Record<string, any> = { page, sort_by: sort };
+  if (genre) queryParams.with_genres = genre;
+  if (year) queryParams.first_air_date_year = year;
+  return fetchTMDB("/discover/tv", queryParams);
+}
+
+// Person
+export async function getPerson(personId: string | number) {
+  return fetchTMDB(`/person/${personId}`, {
+    append_to_response: "combined_credits",
+  });
+}
+
 // Search
 export async function searchMulti(query: string, page = 1) {
   return fetchTMDB("/search/multi", {
