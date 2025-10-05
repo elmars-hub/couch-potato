@@ -1,30 +1,48 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { signupSchema, SignupSchema } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Film } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { Spinner } from "../ui/spinner";
+import Link from "next/link";
 
 export function SignupForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const { signUp, isLoading } = useAuth();
+  const { signUp, authLoading } = useAuth();
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const form = useForm<SignupSchema>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+  });
 
-    const { error: signupError } = await signUp(email, password, name);
+  async function onSubmit(values: SignupSchema) {
+    console.log(values);
+    try {
+      await signUp(values.email, values.password, values.name);
 
-    if (signupError) {
-      setError(signupError.message || "Signup failed");
+      toast.success("Signed up successfully!");
+      form.reset();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign up. Please try again.");
     }
-  };
+  }
 
   return (
     <div className="glass-panel p-8 rounded-2xl animate-scale-in shadow-2xl">
@@ -46,67 +64,84 @@ export function SignupForm() {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSignup} className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="name" className="text-foreground">
-            Name
-          </Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="John Doe"
-            className="glass-input h-12"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-foreground">
-            Email
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            className="glass-input h-12"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password" className="text-foreground">
-            Password
-          </Label>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            className="glass-input h-12"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-          />
-        </div>
-
-        {error && (
-          <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-            {error}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* Full Name */}
+          <div className="mb-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="John Doe"
+                      {...field}
+                      className="glass-input h-12"
+                    />
+                  </FormControl>
+                  <FormMessage className="mt-1 text-base" />
+                </FormItem>
+              )}
+            />
           </div>
-        )}
 
-        <Button
-          type="submit"
-          className="w-full h-12 bg-[#E50914] hover:bg-[#E50914]/70 transition-colors cursor-pointer duration-300 text-white font-semibold text-base"
-          disabled={isLoading}
-        >
-          {isLoading ? "Signing up..." : "Sign Up"}
-        </Button>
-      </form>
+          {/* Email */}
+          <div className="mb-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      {...field}
+                      className="glass-input h-12"
+                    />
+                  </FormControl>
+                  <FormMessage className="mt-1 text-base" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Password */}
+          <div className="mb-4">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-foreground">Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      {...field}
+                      className="glass-input h-12"
+                    />
+                  </FormControl>
+                  <FormMessage className="mt-1 text-base" />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            className="w-full h-12 bg-[#E50914] hover:bg-[#E50914]/70 cursor-pointer transition-colors duration-300 text-white font-semibold text-base"
+            disabled={authLoading}
+          >
+            {authLoading ? <Spinner className="size-6" /> : "Sign Up"}
+          </Button>
+        </form>
+      </Form>
 
       {/* Divider */}
       <div className="relative my-6">

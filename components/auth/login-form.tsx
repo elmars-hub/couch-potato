@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Film } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { Spinner } from "../ui/spinner";
+import Link from "next/link";
 
 export function LoginForm() {
   const { signIn, authLoading } = useAuth();
@@ -111,6 +112,26 @@ export function LoginForm() {
           </Button>
         </form>
       </Form>
+
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border/50" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      {/* Login Link */}
+      <p className="text-center text-muted-foreground">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/signup"
+          className="text-secondary hover:text-secondary/80 font-semibold transition-colors"
+        >
+          Sign up
+        </Link>
+      </p>
     </div>
   );
 }
