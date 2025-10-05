@@ -1,6 +1,6 @@
 // src/hooks/useDiscover.ts
 import { useQuery } from "@tanstack/react-query";
-import { discoverMovies } from "@/lib/tmdb";
+import { discoverMovies, discoverTv } from "@/lib/tmdb";
 
 interface DiscoverParams {
   page?: number;
@@ -9,10 +9,18 @@ interface DiscoverParams {
   sort?: string;
 }
 
-export function useDiscover(params: DiscoverParams) {
+export function useDiscoverMovies(params: DiscoverParams) {
   return useQuery({
-    queryKey: ["discover", params],
+    queryKey: ["discover", "movie", params],
     queryFn: () => discoverMovies(params),
+    staleTime: 1000 * 60 * 2,
+  });
+}
+
+export function useDiscoverTv(params: DiscoverParams) {
+  return useQuery({
+    queryKey: ["discover", "tv", params],
+    queryFn: () => discoverTv(params),
     staleTime: 1000 * 60 * 2,
   });
 }
