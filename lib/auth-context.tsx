@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import axios, { type AxiosError } from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -43,13 +42,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const {
     data: user,
-    isLoading,
+    isLoading: userLoading,
     refetch: refetchUser,
   } = useQuery({
     queryKey: ["auth-user"],
     queryFn: async (): Promise<AuthUser | null> => {
       if (!supabaseUser) return null;
-
       try {
         const { data } = await axios.get("/api/auth/sync-user");
         return data.user;
@@ -59,12 +57,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     },
     enabled: !!supabaseUser && isHydrated,
-    staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh
-    gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache
-    refetchOnWindowFocus: false, // Don't refetch on window focus
-    refetchOnMount: false, // Don't refetch on component mount
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
+  // 🔹 Mutations
   const signInMutation = useMutation({
     mutationFn: async ({
       email,
@@ -140,9 +139,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth-user"] }),
   });
 
+  const authLoading =
+    signInMutation.isPending ||
+    signUpMutation.isPending ||
+    signOutMutation.isPending ||
+    updateProfileMutation.isPending;
+
   const contextValue: AuthContextType = {
     user: user ?? null,
-    isLoading: !isHydrated || isLoading,
+    isLoading: !isHydrated || userLoading,
+    authLoading,
     signIn: async (email, password) => {
       try {
         await signInMutation.mutateAsync({ email, password });
@@ -169,7 +175,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
       }
     },
-    signOut: async () => await signOutMutation.mutateAsync(),
+    signOut: async () => {
+      try {
+        await signOutMutation.mutateAsync();
+        return { error: null };
+      } catch (err) {
+        return {
+          error:
+            err instanceof Error
+              ? { message: err.message }
+              : { message: "Unknown error" },
+        };
+      }
+    },
     updateProfile: async (updates) => {
       try {
         await updateProfileMutation.mutateAsync(updates);

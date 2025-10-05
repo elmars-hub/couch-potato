@@ -7,21 +7,21 @@ export interface AuthUser {
   updatedAt: Date;
 }
 
+export type AuthActionResponse = {
+  error: { message: string } | null;
+};
+
 export interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
-  signIn: (
-    email: string,
-    password: string
-  ) => Promise<{ error: { message: string } | null }>;
+  authLoading: boolean;
+  signIn: (email: string, password: string) => Promise<AuthActionResponse>;
   signUp: (
     email: string,
     password: string,
     name: string
-  ) => Promise<{ error: { message: string } | null }>;
-  signOut: () => Promise<void>;
-  updateProfile: (updates: {
-    name?: string;
-  }) => Promise<{ error: { message: string } | null }>;
+  ) => Promise<AuthActionResponse>;
+  signOut: () => Promise<AuthActionResponse>;
+  updateProfile: (updates: { name?: string }) => Promise<AuthActionResponse>;
   refetchUser: () => void;
 }
