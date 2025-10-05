@@ -7,9 +7,11 @@ import Link from "next/link";
 import { Play, Info } from "lucide-react";
 import { useNowPlayingMovies } from "@/hooks/useMovies";
 import { getImageUrl } from "@/lib/tmdb";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MAX_CONTENT_WIDTH_CLASS = "max-w-[1800px]";
 const SLIDE_DURATION = 7000;
+const PROGRESS_RESET_DELAY_MS = 80;
 
 interface Movie {
   id: number;
@@ -37,7 +39,6 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Use the first 8 movies from props
   const displayMovies = movies?.results?.slice(0, 8) || [];
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
     return () => clearInterval(interval);
   }, [displayMovies.length, isPaused]);
 
-  // Progress bar animation
+  // Progress bar animation (robust reset between slides)
   useEffect(() => {
     const progressElement = document.getElementById(`progress-${index}`);
     if (!progressElement || isPaused) return;
@@ -58,11 +59,11 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
     // Reset animation
     progressElement.style.width = "0%";
 
-    // Small delay to ensure reset is applied
+    // Small delay to ensure reset is applied and layout has updated
     const timeout = setTimeout(() => {
       progressElement.style.transition = `width ${SLIDE_DURATION}ms linear`;
       progressElement.style.width = "100%";
-    }, 50);
+    }, PROGRESS_RESET_DELAY_MS);
 
     return () => {
       clearTimeout(timeout);
@@ -91,64 +92,94 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
   const currentMovie = displayMovies[index];
 
   return (
-    <section
-      className="relative w-full h-[75vh] md:h-[76vh] lg:h-[80vh] xl:h-[85vh] overflow-hidden"
+    <motion.section
+      className="relative w-full h-[60vh] sm:h-[70vh] md:h-[76vh] lg:h-[80vh] xl:h-[85vh] overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Movie Slides */}
-      {displayMovies.map((movie, i) => {
-        const images = getImageUrl(
-          movie.backdrop_path || movie.poster_path,
-          "original"
-        );
+      <AnimatePresence mode="wait">
+        {displayMovies.map((movie, i) => {
+          const images = getImageUrl(
+            movie.backdrop_path || movie.poster_path,
+            "original"
+          );
 
-        return (
-          <div
-            key={movie.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              i === index ? "opacity-100 z-10" : "opacity-0 z-0"
-            }`}
-          >
-            <Image
-              src={images}
-              alt={movie.title}
-              fill
-              priority={i === index}
-              className="object-cover object-top"
-            />
+          return (
+            <motion.div
+              key={`${movie.id}-${i}`}
+              className="absolute inset-0"
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{
+                opacity: i === index ? 1 : 0,
+                scale: i === index ? 1 : 1.1,
+                zIndex: i === index ? 10 : 0,
+              }}
+              exit={{ opacity: 0, scale: 1.1 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
+            >
+              <Image
+                src={images}
+                alt={movie.title}
+                fill
+                priority={i === index}
+                className="object-cover object-center sm:object-top"
+              />
 
-            {/* Enhanced gradient overlays for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/90 via-[#141414]/40 to-transparent" />
-            {/* <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#141414]" /> */}
-          </div>
-        );
-      })}
+              {/* Enhanced gradient overlays for better text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/90 via-[#141414]/40 to-transparent" />
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
 
       {/* Content Overlay */}
       <div
         className={`absolute inset-0 z-20 mx-auto ${MAX_CONTENT_WIDTH_CLASS} w-full`}
       >
-        <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 lg:p-16 space-y-6">
-          <div className="max-w-2xl space-y-4">
+        <motion.div
+          className="absolute bottom-0 left-0 w-full p-4 sm:p-6 md:p-10 lg:p-16 space-y-4 sm:space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <div className="max-w-2xl space-y-3 sm:space-y-4">
             {/* Featured badge */}
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded">
+            <motion.div
+              className="flex items-center gap-2"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+            >
+              <span className="px-2 sm:px-3 py-1 bg-red-600 text-white text-xs font-bold uppercase tracking-wider rounded">
                 Now Playing
               </span>
-              <span className="text-gray-300 text-sm">
+              <span className="text-gray-300 text-xs sm:text-sm">
                 {index + 1} / {displayMovies.length}
               </span>
-            </div>
+            </motion.div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-2xl leading-tight">
+            <motion.h1
+              className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-2xl leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
               {currentMovie.title}
-            </h1>
+            </motion.h1>
 
             {/* Movie Info */}
-            <div className="flex items-center gap-3 text-sm md:text-base">
+            <motion.div
+              className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm md:text-base flex-wrap"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
               <span className="px-2 py-1 bg-yellow-500 text-black font-bold rounded text-xs">
                 {currentMovie.vote_average.toFixed(1)}
               </span>
@@ -159,54 +190,85 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
               <span className="text-gray-300">
                 {Math.floor(Math.random() * 60) + 90} min
               </span>
-            </div>
+            </motion.div>
 
             {/* Overview */}
-            <p className="text-gray-200 text-base md:text-lg line-clamp-3 leading-relaxed max-w-xl drop-shadow-lg">
+            <motion.p
+              className="text-gray-200 text-sm sm:text-base md:text-lg line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-xl drop-shadow-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+            >
               {currentMovie.overview}
-            </p>
+            </motion.p>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3 pt-2 mb-10">
+            <motion.div
+              className="flex flex-wrap gap-2 sm:gap-3 pt-2 mb-6 sm:mb-10"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
+            >
               <Link href={`/movies/${currentMovie.id}`}>
-                <button className="flex items-center gap-2 px-6 py-3 rounded-md bg-white text-black font-semibold hover:bg-white/90 transition-all shadow-lg hover:scale-105 transform duration-200">
-                  <Play className="w-5 h-5 fill-current" />
+                <motion.button
+                  className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-white text-black font-semibold hover:bg-white/90 transition-all shadow-lg text-sm sm:text-base"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
                   Play Now
-                </button>
+                </motion.button>
               </Link>
 
               <Link href={`/movies/${currentMovie.id}`}>
-                <button className="flex items-center gap-2 px-6 py-3 rounded-md bg-gray-500/70 backdrop-blur-sm text-white font-semibold hover:bg-gray-500/90 transition-all border border-gray-400/30">
-                  <Info className="w-5 h-5" />
+                <motion.button
+                  className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-gray-500/70 backdrop-blur-sm text-white font-semibold hover:bg-gray-500/90 transition-all border border-gray-400/30 text-sm sm:text-base"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Info className="w-4 h-4 sm:w-5 sm:h-5" />
                   More Info
-                </button>
+                </motion.button>
               </Link>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Carousel Controls - Bottom Right */}
-      <div className="absolute bottom-8 right-10 md:right-8 z-30 flex items-center gap-3 ">
+      <motion.div
+        className="absolute hidden bottom-8 right-10 md:right-8 z-30 md:flex items-center gap-3"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9, duration: 0.5 }}
+      >
         <div className="flex gap-2">
           {displayMovies.map((_, i) => (
-            <button
+            <motion.button
               key={i}
               onClick={() => goToSlide(i)}
-              className="relative h-1 w-8 md:w-12 bg-gray-600/50 hover:bg-gray-400/50 transition-colors overflow-hidden rounded-full"
+              className="relative h-1 w-8 bg-gray-600/50 hover:bg-gray-400/50 transition-colors overflow-hidden rounded-full"
               aria-label={`Go to slide ${i + 1}`}
+              // whileHover={{ scale: 1.1 }}
+              // whileTap={{ scale: 0.95 }}
             >
               {i === index && (
-                <div
+                <motion.div
                   id={`progress-${index}`}
                   className="absolute inset-0 bg-red-600 rounded-full"
                   style={{ width: "0%", transition: "none" }}
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  // transition={{
+                  //   duration: SLIDE_DURATION / 1000,
+                  //   ease: "linear",
+                  // }}
                 />
               )}
-            </button>
+            </motion.button>
           ))}
         </div>
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }

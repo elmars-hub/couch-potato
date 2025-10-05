@@ -9,6 +9,7 @@ import { getImageUrl } from "@/lib/tmdb";
 
 const MAX_CONTENT_WIDTH_CLASS = "max-w-[1800px]";
 const SLIDE_DURATION = 7000;
+const PROGRESS_RESET_DELAY_MS = 80;
 
 interface TvShow {
   id: number;
@@ -48,7 +49,7 @@ export function TvCarousel({ tvshows }: TvCarouselProps) {
     return () => clearInterval(interval);
   }, [displayShows.length, isPaused]);
 
-  // Progress bar animation
+  // Progress bar animation (robust reset between slides)
   useEffect(() => {
     const progressElement = document.getElementById(`progress-${index}`);
     if (!progressElement || isPaused) return;
@@ -58,7 +59,7 @@ export function TvCarousel({ tvshows }: TvCarouselProps) {
     const timeout = setTimeout(() => {
       progressElement.style.transition = `width ${SLIDE_DURATION}ms linear`;
       progressElement.style.width = "100%";
-    }, 50);
+    }, PROGRESS_RESET_DELAY_MS);
 
     return () => {
       clearTimeout(timeout);
