@@ -1,6 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 
+export interface Movie {
+  id: number;
+  title: string;
+  overview: string;
+  backdrop_path: string | null;
+  poster_path: string | null;
+  release_date: string;
+  vote_average: number;
+  genre_ids: number[];
+}
+
+export interface TMDBResponse {
+  results: Movie[];
+  page: number;
+  total_pages: number;
+  total_results: number;
+}
+
 const baseUrl = "https://api.themoviedb.org/3";
 const apiKey = process.env.NEXT_PUBLIC_TMDB_API_KEY;
 const imageBase = process.env.NEXT_PUBLIC_TMDB_IMAGE_BASE;
@@ -22,7 +40,7 @@ async function fetchTMDB(endpoint: string, params: Record<string, any> = {}) {
 
 export function getImageUrl(
   path: string | null,
-  size: "w500" | "original" = "w500"
+  size: "w500" | "w780" | "original" = "original"
 ) {
   if (!path) return "/placeholder.jpg";
   return `https://image.tmdb.org/t/p/${size}${
@@ -110,4 +128,146 @@ export async function fetchCredits(type: "movie" | "tv", id: number | string) {
 export async function fetchVideos(type: "movie" | "tv", id: number | string) {
   const data = await fetchTMDB(`/${type}/${id}/videos`);
   return data; // includes trailers, clips
+}
+
+export type Category =
+  | "trending"
+  | "popular"
+  | "top-rated"
+  | "now-playing"
+  | "upcoming"
+  | "action"
+  | "comedy"
+  | "animation"
+  | "adventure"
+  | "horror"
+  | "romance"
+  | "hollywood"
+  | "nollywood"
+  | "anime";
+
+interface FetchOptions {
+  [key: string]: string | number | undefined;
+}
+export function getYear(dateString: string): string {
+  return new Date(dateString).getFullYear().toString();
+}
+
+// Generic fetch helper
+async function fetchFromTMDB(endpoint: string, params: FetchOptions = {}) {
+  const url = new URL(`${baseUrl}${endpoint}`);
+  if (!apiKey) {
+    throw new Error("TMDB API key is not defined");
+  }
+  url.searchParams.set("api_key", apiKey);
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, String(value));
+  });
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`TMDB API error: ${res.status}`);
+  return res.json();
+}
+
+// Map categories to API calls
+
+export async function getMoviesByCategory(
+  category: Category,
+  page = 1
+): Promise<TMDBResponse> {
+  switch (category) {
+    case "trending":
+      return fetchFromTMDB("/trending/movie/week", { page });
+
+    case "popular":
+      return fetchFromTMDB("/movie/popular", { page });
+
+    case "top-rated":
+      return fetchFromTMDB("/movie/top_rated", { page });
+
+    case "now-playing":
+      return fetchFromTMDB("/movie/now_playing", { page });
+
+    case "upcoming":
+      return fetchFromTMDB("/movie/upcoming", { page });
+
+    case "action":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 28,
+        page,
+      });
+
+    case "comedy":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 35,
+        page,
+      });
+
+    case "animation":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 16,
+        page,
+      });
+
+    case "adventure":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 12,
+        page,
+      });
+
+    case "horror":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 27,
+        page,
+      });
+
+    case "romance":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 10749,
+        page,
+      });
+
+    case "hollywood":
+      return fetchFromTMDB("/discover/movie", {
+        with_original_language: "en",
+        region: "US",
+        sort_by: "popularity.desc",
+        page,
+      });
+
+    case "nollywood":
+      return fetchFromTMDB("/discover/movie", {
+        with_origin_country: "NG",
+        sort_by: "popularity.desc",
+        page,
+      });
+
+    case "anime":
+      return fetchFromTMDB("/discover/movie", {
+        with_genres: 16,
+        with_original_language: "ja",
+        sort_by: "popularity.desc",
+        page,
+      });
+
+    default:
+      throw new Error(`Unknown category: ${category}`);
+  }
+}
+
+export async function getTopRatedMovies(page = 1): Promise<TMDBResponse> {
+  return getMoviesByCategory("top-rated", page);
+}
+
+export async function getUpcomingMovies(page = 1): Promise<TMDBResponse> {
+  return getMoviesByCategory("upcoming", page);
+}
+
+export async function getActionMovies(page = 1): Promise<TMDBResponse> {
+  return getMoviesByCategory("action", page);
+}
+
+export async function getComedyMovies(page = 1): Promise<TMDBResponse> {
+  return getMoviesByCategory("comedy", page);
 }
