@@ -2,6 +2,9 @@
 
 import { Bookmark } from "lucide-react";
 import { useIsInWatchlist, useToggleWatchlist } from "@/hooks/useWatchlist";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface WatchlistButtonProps {
   mediaId: number;
@@ -14,13 +17,34 @@ export default function WatchlistButton({
 }: WatchlistButtonProps) {
   const isInWatchlist = useIsInWatchlist(mediaId, mediaType);
   const toggleWatchlist = useToggleWatchlist();
+  const { user } = useAuth();
+  const router = useRouter();
 
   return (
     <button
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggleWatchlist.mutate({ mediaId, mediaType, isInWatchlist });
+        if (!user) {
+          toast.error("Please log in to bookmark");
+          router.push("/login");
+          return;
+        }
+        toggleWatchlist.mutate(
+          { mediaId, mediaType, isInWatchlist },
+          {
+            onSuccess: () => {
+              toast.success(
+                isInWatchlist 
+                  ? "Removed from watchlist" 
+                  : "Added to watchlist"
+              );
+            },
+            onError: () => {
+              toast.error("Failed to update watchlist");
+            },
+          }
+        );
       }}
       className="p-2"
     >

@@ -1,5 +1,8 @@
 import { Heart } from "lucide-react";
 import { useIsFavorite, useToggleFavorite } from "@/hooks/useFavourites";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export function FavoriteButton({
   mediaId,
@@ -10,10 +13,21 @@ export function FavoriteButton({
 }) {
   const isFavorite = useIsFavorite(mediaId, mediaType);
   const toggleFavorite = useToggleFavorite();
+  const { user } = useAuth();
+  const router = useRouter();
 
   return (
     <button
-      onClick={() => toggleFavorite.mutate({ mediaId, mediaType, isFavorite })}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!user) {
+          toast.error("Please log in to like movies");
+          router.push("/login");
+          return;
+        }
+        toggleFavorite.mutate({ mediaId, mediaType, isFavorite });
+      }}
       className="p-2"
     >
       <Heart
