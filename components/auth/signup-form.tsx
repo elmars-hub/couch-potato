@@ -33,10 +33,8 @@ export function SignupForm() {
   });
 
   async function onSubmit(values: SignupSchema) {
-    console.log(values);
     try {
       await signUp(values.email, values.password, values.name);
-
       toast.success("Signed up successfully!");
       form.reset();
     } catch (error: any) {
@@ -46,7 +44,6 @@ export function SignupForm() {
 
   return (
     <div className="glass-panel p-8 rounded-2xl animate-scale-in shadow-2xl">
-      {/* Logo */}
       <div className="flex items-center justify-center mb-8">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center animate-glow">
@@ -56,14 +53,12 @@ export function SignupForm() {
         </div>
       </div>
 
-      {/* Title */}
       <div className="text-center mb-3">
         <h2 className="text-2xl font-bold text-foreground mb-2">
           Create Account
         </h2>
       </div>
 
-      {/* Form */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Full Name */}
@@ -149,11 +144,10 @@ export function SignupForm() {
           <div className="w-full border-t border-border/50" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or</span>
+          <span className="bg-background px-2 text-muted-foreground">or</span>
         </div>
       </div>
 
-      {/* Login Link */}
       <p className="text-center text-muted-foreground">
         Already have an account?{" "}
         <Link

@@ -118,11 +118,10 @@ export function LoginForm() {
           <div className="w-full border-t border-border/50" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">Or</span>
+          <span className="bg-background px-2 text-muted-foreground">or</span>
         </div>
       </div>
 
-      {/* Login Link */}
       <p className="text-center text-muted-foreground">
         Don&apos;t have an account?{" "}
         <Link
