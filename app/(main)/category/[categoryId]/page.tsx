@@ -3,12 +3,11 @@ import { CategoryPageClient } from "./category-page-client";
 import type { Category } from "@/lib/tmdb";
 
 interface CategoryPageProps {
-  params: Promise<{ id: string }>;
+  params: { categoryId: string };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const { id } = await params;
-  const category = id as Category;
+export default function CategoryPage({ params }: CategoryPageProps) {
+  const category = params.categoryId as Category;
 
   return (
     <Suspense fallback={<div className="min-h-screen bg-black" />}>

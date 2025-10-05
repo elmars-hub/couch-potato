@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/prefer-as-const */
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getImageUrl } from "@/lib/tmdb";
 import {
@@ -17,9 +19,8 @@ import WatchlistButton from "@/components/functional/watchlistButton";
 export default function TvShowDetailsPage() {
   const params = useParams();
   const tvshowId = params.tvshowId as string;
-  const type: "tv" = "tv"; // fixed for this route
+  const type: "tv" = "tv";
 
-  // Fetch data
   const { data: details, isLoading: loadingDetails } = useMediaDetails(
     type,
     tvshowId
@@ -28,14 +29,29 @@ export default function TvShowDetailsPage() {
   const { data: videos } = useMediaVideos(type, tvshowId);
 
   if (loadingDetails)
-    return <p className="text-white p-4 text-center">Loading...</p>;
+    return (
+      <main className="min-h-screen bg-[#141414] text-white mt-24 ">
+        <div className="container mx-auto px-4 py-8">
+          <div className="relative h-64 sm:h-80 md:h-96 w-full bg-white/10 animate-pulse rounded" />
+          <div className="flex flex-col md:flex-row gap-8 mt-6">
+            <div className="w-full md:w-1/3 h-80 md:h-[500px] bg-white/10 rounded animate-pulse" />
+            <div className="flex-1 space-y-4">
+              <div className="h-8 w-2/3 bg-white/10 rounded animate-pulse" />
+              <div className="h-4 w-full bg-white/10 rounded animate-pulse" />
+              <div className="h-4 w-5/6 bg-white/10 rounded animate-pulse" />
+              <div className="h-4 w-4/6 bg-white/10 rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   if (!details)
     return <p className="text-white p-4 text-center">No details found.</p>;
 
   const officialTrailer = videos?.find((v: Video) => v.type === "Trailer");
 
   return (
-    <main className="min-h-screen bg-gray-900 text-white">
+    <main className="min-h-screen  text-white overflow-hidden">
       {/* Backdrop */}
       {details.backdrop_path && (
         <div className="relative h-64 sm:h-80 md:h-96 w-full">
@@ -43,9 +59,9 @@ export default function TvShowDetailsPage() {
             src={getImageUrl(details.backdrop_path, "original")}
             alt={details.name ?? "Backdrop"}
             fill
-            className="object-cover opacity-30"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/70 to-transparent" />
         </div>
       )}
 
@@ -76,9 +92,7 @@ export default function TvShowDetailsPage() {
             {/* Trailer */}
             {officialTrailer && (
               <div>
-                <h2 className="text-2xl font-semibold mb-2">
-                  Official Trailer
-                </h2>
+                <h2 className="text-xl font-semibold mb-2">Official Trailer</h2>
                 <a
                   href={`https://www.youtube.com/watch?v=${officialTrailer.key}`}
                   target="_blank"
@@ -101,9 +115,11 @@ export default function TvShowDetailsPage() {
                 <h2 className="text-2xl font-semibold mb-2">Cast</h2>
                 <div className="flex overflow-x-auto gap-4 pb-2">
                   {credits.slice(0, 6).map((cast: Cast) => (
-                    <div
+                    <Link
+                      href={`/person/${cast.id}`}
                       key={cast.id}
                       className="w-28 flex-shrink-0 text-center"
+                      prefetch
                     >
                       <div className="relative w-28 h-36 rounded overflow-hidden shadow hover:scale-105 transition-transform">
                         <Image
@@ -115,8 +131,38 @@ export default function TvShowDetailsPage() {
                       </div>
                       <p className="text-sm mt-1 font-medium">{cast.name}</p>
                       <p className="text-xs text-gray-400">{cast.character}</p>
-                    </div>
+                    </Link>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* Related */}
+            {Array.isArray((details as any)?.similar?.results) && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-semibold mb-3">Related</h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {((details as any).similar.results as any[])
+                    .slice(0, 12)
+                    .map((s: any) => (
+                      <Link
+                        href={`/tvshows/${s.id}`}
+                        key={s.id}
+                        className="group relative"
+                      >
+                        <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-800">
+                          <Image
+                            src={getImageUrl(s.poster_path, "w500")}
+                            alt={s.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="mt-2 text-sm line-clamp-1">
+                          {s.name}
+                        </div>
+                      </Link>
+                    ))}
                 </div>
               </div>
             )}

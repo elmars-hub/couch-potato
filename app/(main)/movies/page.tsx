@@ -1,79 +1,130 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePopularMovies, useTrendingMovies } from "@/hooks/useMovies";
-import { getImageUrl } from "@/lib/tmdb"; // your helper function
-import { MovieCarousel } from "@/components/main/moviecarousel";
+import { useTrendingMovies } from "@/hooks/useMovies";
+import GenreFilter from "@/components/functional/genre-filter";
+import { discoverMovies, getPopularMovies } from "@/lib/tmdb";
+import { getImageUrl } from "@/helpers/url";
+import { getYear } from "@/helpers/date";
+import { MovieCarousel } from "@/components/movies/MovieCarousel";
+import CategorySection from "@/components/functional/category-section";
+import { GridSkeleton } from "@/components/general/GridSkeleton";
 
 export default function MoviesPage() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, error } = usePopularMovies(page);
-
+  const [genre, setGenre] = useState<string | undefined>(undefined);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const { data: movies } = useTrendingMovies();
 
-  if (isLoading) {
-    return <p className="text-white text-center mt-20">Loading movies...</p>;
-  }
+  // Reset on genre change
+  useEffect(() => {
+    setItems([]);
+    setPage(1);
+    setHasMore(true);
+  }, [genre]);
 
-  if (error) {
-    return (
-      <p className="text-red-500 text-center mt-20">Failed to load movies</p>
-    );
-  }
+  // Load items
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setLoading(true);
+      try {
+        const res = genre
+          ? await discoverMovies({ page, genre })
+          : await getPopularMovies(page);
+        if (!mounted) return;
+        setItems((prev) =>
+          page === 1 ? res.results : [...prev, ...res.results]
+        );
+        setHasMore(res.page < res.total_pages);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [genre, page]);
 
   return (
     <>
-      <MovieCarousel movies={movies} />
+      {movies ? <MovieCarousel movies={movies.results ?? []} /> : null}
 
-      <main className="min-h-screen bg-gray-900 py-8">
+      <main className="min-h-screen bg-[#141414] py-8">
         <div className="container mx-auto px-4">
-          <h1 className="mb-8 text-4xl font-bold text-white">Popular Movies</h1>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {data?.results.map((movie: any) => (
-              <Link
-                key={movie.id}
-                href={`/movies/${movie.id}?type=movie`}
-                className="bg-gray-800 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform"
-              >
-                <div className="relative w-full h-[300px]">
-                  <Image
-                    src={getImageUrl(movie.poster_path)}
-                    alt={movie.title || movie.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h2 className="text-white font-semibold text-lg mb-2">
-                    {movie.title || movie.name}
-                  </h2>
-                  <p className="text-gray-300 text-sm line-clamp-3">
-                    {movie.overview || "No description available."}
-                  </p>
-                </div>
-              </Link>
-            ))}
+          <div className="space-y-8 pb-6">
+            <CategorySection title="Trending Now" categoryId="trending" />
           </div>
 
-          {/* Pagination */}
-          <div className="flex justify-center mt-8 gap-4">
+          <h2 className="mb-2 text-2xl font-semibold text-white">
+            Browse Movies
+          </h2>
+          <GenreFilter type="movie" value={genre} onChange={setGenre} />
+
+          {loading && items.length === 0 ? (
+            <GridSkeleton count={18} />
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {items.map((movie) => (
+                <Link
+                  key={movie.id}
+                  href={`/movies/${movie.id}?type=movie`}
+                  className="group relative"
+                >
+                  <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-800">
+                    <Image
+                      src={getImageUrl(movie.poster_path, "w500")}
+                      alt={movie.title || movie.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <h3 className="text-white font-semibold text-sm line-clamp-2 mb-2">
+                          {movie.title || movie.name}
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs text-white/80 mb-2">
+                          {typeof movie.vote_average === "number" && (
+                            <span>⭐ {movie.vote_average.toFixed(1)}</span>
+                          )}
+                          {movie.release_date && (
+                            <>
+                              <span>•</span>
+                              <span>{getYear(movie.release_date)}</span>
+                            </>
+                          )}
+                        </div>
+                        <button className="w-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded py-1.5">
+                          ▶ Play
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-2 text-sm line-clamp-1">
+                    {movie.title || movie.name}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+
+          <div className="flex justify-center mt-8">
             <button
-              className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
-              disabled={page === 1}
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              onClick={() => setPage((p) => p + 1)}
+              disabled={!hasMore || loading}
+              className="px-6 py-3 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-60"
             >
-              Previous
-            </button>
-            <span className="text-white px-4 py-2">{page}</span>
-            <button
-              className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              Next
+              {loading
+                ? "Loading..."
+                : hasMore
+                ? "Load More"
+                : "No more results"}
             </button>
           </div>
         </div>

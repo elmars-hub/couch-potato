@@ -1,5 +1,7 @@
-import { getCurrentUser } from "@/lib/supabase/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -14,58 +16,50 @@ import { ProfileForm } from "@/components/profile/profile-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarUrl, getInitials } from "@/lib/avatar";
 
-export default async function ProfilePage() {
-  const user = await getCurrentUser();
+export default function ProfilePage() {
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-muted/30">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="h-8 w-40 bg-white/10 rounded animate-pulse" />
+            <div className="h-60 bg-white/10 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
-    redirect("/login");
+    router.push("/login");
+    return null;
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#141414] text-white mt-24">
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-3xl mx-auto space-y-8 text-center">
           <div>
             <h1 className="text-3xl font-bold">Profile</h1>
-            <p className="text-muted-foreground">
-              Manage your account and preferences
-            </p>
+            <p className="text-white/60">Manage your account and preferences</p>
           </div>
 
           {/* Profile Update Form */}
           <ProfileForm user={user} />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Information</CardTitle>
-              <CardDescription>Your personal details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage
-                    src={getAvatarUrl(user.email, 64)}
-                    alt={`${user.name || user.email}'s avatar`}
-                  />
-                  <AvatarFallback className="text-lg">
-                    {getInitials(user.name, user.email)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold">{user.name || "User"}</p>
-                  <p className="text-sm text-muted-foreground">{user.email}</p>
-                </div>
-              </div>
-              <div className="pt-4 space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  User ID: <span className="font-mono">{user.id}</span>
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Member since: {new Date(user.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-center gap-4">
+            <Avatar className="h-16 w-16">
+              <AvatarImage src={getAvatarUrl(user.email, 64)} alt={`${user.name || user.email}'s avatar`} />
+              <AvatarFallback className="text-lg">{getInitials(user.name, user.email)}</AvatarFallback>
+            </Avatar>
+            <div className="text-left">
+              <p className="font-semibold">{user.name || "User"}</p>
+              <p className="text-sm text-white/60">{user.email}</p>
+            </div>
+          </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
@@ -80,7 +74,7 @@ export default async function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href="/profile/favorites">View Favorites</Link>
+                  <Link href="/profile/likes">View Likes</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -97,25 +91,13 @@ export default async function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link href="/profile/watchlist">View Watchlist</Link>
+                  <Link href="/watchlist">View Watchlist</Link>
                 </Button>
               </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Database Sync Status</CardTitle>
-              <CardDescription>Supabase Auth ↔ Neon Database</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p>✅ User synced to Neon database</p>
-              <p className="text-muted-foreground">
-                This user record exists in both Supabase Auth and your Neon
-                PostgreSQL database.
-              </p>
-            </CardContent>
-          </Card>
+          
 
           <div className="flex justify-center">
             <Button variant="outline" asChild>
