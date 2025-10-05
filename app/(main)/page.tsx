@@ -1,6 +1,7 @@
 import { CategoryCarousel } from "@/components/functional/category-carousel";
 import { HeroCarousel } from "@/components/main/herocarousel";
 import { getMoviesByCategory, getNowPlayingMovies } from "@/lib/tmdb";
+import HomeInfiniteFeed from "@/components/functional/home-infinite-feed";
 
 export default async function HomePage() {
   const movies = await getNowPlayingMovies();
@@ -56,6 +57,11 @@ export default async function HomePage() {
           movies={animation.results.slice(0, 15)}
           categoryId="animation"
         />
+      </div>
+
+      {/* Infinite feeds */}
+      <div className="container mx-auto px-4 pb-24">
+        <HomeInfiniteFeed />
       </div>
     </main>
   );
