@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Movie } from "@/lib/tmdb";
 import { getImageUrl, getYear } from "@/lib/tmdb";
+import { motion } from "framer-motion";
 
 interface CategoryCarouselProps {
   title: string;
@@ -50,95 +51,125 @@ export function CategoryCarousel({
   };
 
   return (
-    <section className="py-8">
+    <motion.section
+      className="py-6 sm:py-8"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+    >
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
+        <motion.div
+          className="flex items-center justify-between mb-4 sm:mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          viewport={{ once: true }}
+        >
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
             {title}
-            {title.includes("Trending") && <span className="text-2xl">🔥</span>}
+            {title.includes("Trending") && (
+              <span className="text-xl sm:text-2xl">🔥</span>
+            )}
           </h2>
-          <Link href={`/category/${categoryId}`}>
+          <Link href={`/category/${categoryId}`} prefetch>
             <Button
               variant="ghost"
-              className="text-white hover:text-red-500 gap-2 group"
+              className="text-white hover:text-red-500 gap-2 group text-sm sm:text-base"
             >
               More
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-        </div>
+        </motion.div>
 
         {/* Carousel */}
-        <div className="relative group">
+        <motion.div
+          className="relative group"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
           {/* Left Arrow */}
           {showLeftArrow && (
-            <button
+            <motion.button
               onClick={() => scroll("left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-full bg-gradient-to-r from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-start pl-2"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 sm:w-12 h-full bg-gradient-to-r from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-start pl-1 sm:pl-2"
               aria-label="Scroll left"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center">
-                <ChevronLeft className="h-6 w-6 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center">
+                <ChevronLeft className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
               </div>
-            </button>
+            </motion.button>
           )}
 
           {/* Movies Container */}
           <div
             ref={scrollContainerRef}
-            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+            className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {movies.map((movie) => (
-              <Link
+            {movies.map((movie, index) => (
+              <motion.div
                 key={movie.id}
-                href={`/movie/${movie.id}`}
-                className="flex-shrink-0 w-[200px] group/card"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.02 }}
+                className="flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px] group/card"
               >
-                <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-800">
-                  <Image
-                    src={
-                      getImageUrl(movie.poster_path, "w500") ||
-                      "/placeholder.svg"
-                    }
-                    alt={movie.title}
-                    fill
-                    className="object-cover group-hover/card:scale-105 transition-transform duration-300"
-                    sizes="200px"
-                  />
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity">
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="text-white font-semibold text-sm line-clamp-2 mb-1">
-                        {movie.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs text-white/80">
-                        <span>⭐ {movie.vote_average.toFixed(1)}</span>
-                        <span>•</span>
-                        <span>{getYear(movie.release_date)}</span>
+                <Link href={`/movies/${movie.id}`}>
+                  <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-800">
+                    <Image
+                      src={
+                        getImageUrl(movie.poster_path, "w500") ||
+                        "/placeholder.svg"
+                      }
+                      alt={movie.title}
+                      fill
+                      className="object-cover group-hover/card:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 140px, (max-width: 768px) 160px, (max-width: 1024px) 180px, 200px"
+                    />
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+                      <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4">
+                        <h3 className="text-white font-semibold text-xs sm:text-sm line-clamp-2 mb-1">
+                          {movie.title}
+                        </h3>
+                        <div className="flex items-center gap-1 sm:gap-2 text-xs text-white/80">
+                          <span>⭐ {movie.vote_average.toFixed(1)}</span>
+                          <span>•</span>
+                          <span>{getYear(movie.release_date)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             ))}
           </div>
 
           {/* Right Arrow */}
           {showRightArrow && (
-            <button
+            <motion.button
               onClick={() => scroll("right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-full bg-gradient-to-l from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end pr-2"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 sm:w-12 h-full bg-gradient-to-l from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-end pr-1 sm:pr-2"
               aria-label="Scroll right"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <div className="w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center">
-                <ChevronRight className="h-6 w-6 text-white" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-sm flex items-center justify-center">
+                <ChevronRight className="h-4 w-4 sm:h-6 sm:w-6 text-white" />
               </div>
-            </button>
+            </motion.button>
           )}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
