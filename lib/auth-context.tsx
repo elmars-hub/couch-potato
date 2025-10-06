@@ -11,13 +11,7 @@ import type { AuthUser, AuthContextType } from "@/types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({
-  children,
-  initialUser,
-}: {
-  children: React.ReactNode;
-  initialUser?: AuthUser | null;
-}) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
@@ -37,9 +31,22 @@ export function AuthProvider({
       setSupabaseUser(session?.user ?? null);
 
       if (event === "SIGNED_IN") {
+        // Optimistically set user data from Supabase metadata
+        const optimisticUser: AuthUser = {
+          id: session?.user?.id ?? "",
+          email: session?.user?.email ?? "",
+          name: session?.user?.user_metadata?.name ?? null,
+          avatarUrl: session?.user?.user_metadata?.avatar_url ?? null,
+          createdAt: new Date(session?.user?.created_at ?? Date.now()),
+          updatedAt: new Date(),
+        };
+        queryClient.setQueryData(["auth-user"], optimisticUser);
+
+        // Then fetch full user data in background
         queryClient.invalidateQueries({ queryKey: ["auth-user"] });
       } else if (event === "SIGNED_OUT") {
         queryClient.setQueryData(["auth-user"], null);
+        queryClient.removeQueries({ queryKey: ["auth-user"] });
       }
     });
 
@@ -54,23 +61,29 @@ export function AuthProvider({
     queryKey: ["auth-user"],
     queryFn: async (): Promise<AuthUser | null> => {
       if (!supabaseUser) return null;
-      try {
-        const { data } = await axios.get("/api/auth/sync-user");
-        return data.user;
-      } catch (error) {
-        console.error("Failed to sync user", error);
-        return null;
-      }
+      const { data } = await axios.get("/api/auth/sync-user");
+      return data.user;
     },
-    // If we have an initial user, fetch is optional; otherwise depend on supabase state
-    enabled: !!supabaseUser && isHydrated && !initialUser,
+    enabled: !!supabaseUser && isHydrated,
     staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
   });
 
-  // 🔹 Mutations
+  // Use supabaseUser immediately, fallback to API user later
+  const resolvedUser =
+    user ??
+    (supabaseUser
+      ? {
+          id: supabaseUser.id,
+          email: supabaseUser.email ?? "",
+          name: supabaseUser.user_metadata?.name ?? null,
+          avatarUrl: supabaseUser.user_metadata?.avatar_url ?? null,
+          createdAt: new Date(supabaseUser.created_at),
+          updatedAt: new Date(),
+        }
+      : null);
+
+  //  Mutations
   const signInMutation = useMutation({
     mutationFn: async ({
       email,
@@ -87,9 +100,25 @@ export function AuthProvider({
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+    onSuccess: (data) => {
+      // Set optimistic data immediately for instant UI update
+      if (data.user) {
+        const optimisticUser: AuthUser = {
+          id: data.user.id,
+          email: data.user.email ?? "",
+          name: data.user.user_metadata?.name ?? null,
+          avatarUrl: data.user.user_metadata?.avatar_url ?? null,
+          createdAt: new Date(data.user.created_at),
+          updatedAt: new Date(),
+        };
+        queryClient.setQueryData(["auth-user"], optimisticUser);
+      }
+
+      // Navigate immediately without waiting for API sync
       router.push("/");
+
+      // Sync in background
+      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
     },
   });
 
@@ -113,7 +142,7 @@ export function AuthProvider({
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
+      // Navigate immediately
       router.push("/login");
     },
   });
@@ -125,6 +154,7 @@ export function AuthProvider({
       if (error) throw error;
     },
     onSuccess: () => {
+      // Clear data and navigate immediately
       queryClient.setQueryData(["auth-user"], null);
       router.push("/");
     },
@@ -140,12 +170,32 @@ export function AuthProvider({
         throw new Error(err.response?.data?.message || "Failed to update user");
       }
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["auth-user"],
-        exact: true,
-      });
-      await queryClient.refetchQueries({
+    onMutate: async (updates) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["auth-user"] });
+
+      // Snapshot previous value
+      const previousUser = queryClient.getQueryData<AuthUser>(["auth-user"]);
+
+      // Optimistically update
+      if (previousUser) {
+        queryClient.setQueryData<AuthUser>(["auth-user"], {
+          ...previousUser,
+          ...updates,
+        });
+      }
+
+      return { previousUser };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      if (context?.previousUser) {
+        queryClient.setQueryData(["auth-user"], context.previousUser);
+      }
+    },
+    onSettled: () => {
+      // Refetch to ensure consistency
+      queryClient.invalidateQueries({
         queryKey: ["auth-user"],
         exact: true,
       });
@@ -159,7 +209,7 @@ export function AuthProvider({
     updateProfileMutation.isPending;
 
   const contextValue: AuthContextType = {
-    user: initialUser ?? user ?? null,
+    user: resolvedUser,
     isLoading: !isHydrated || userLoading,
     authLoading,
     signIn: async (email, password) => {

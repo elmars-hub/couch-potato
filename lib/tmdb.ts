@@ -291,3 +291,10 @@ export async function getActionMovies(page = 1): Promise<TMDBResponse> {
 export async function getComedyMovies(page = 1): Promise<TMDBResponse> {
   return getMoviesByCategory("comedy", page);
 }
+
+// Generic media details function
+export async function getMediaDetails(type: "movie" | "tv", id: string | number) {
+  return fetchTMDB(`/${type}/${id}`, {
+    append_to_response: "credits,videos,similar",
+  });
+}

@@ -10,10 +10,8 @@ import type { AuthUser } from "@/types/auth";
 
 export function Providers({
   children,
-  initialUser,
 }: {
   children: React.ReactNode;
-  initialUser?: AuthUser | null;
 }) {
   const [queryClient] = useState(
     () =>
@@ -27,14 +25,9 @@ export function Providers({
       })
   );
 
-  // Seed initial user into React Query cache so UI has immediate access
-  if (initialUser !== undefined) {
-    queryClient.setQueryData(["auth-user"], initialUser);
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider initialUser={initialUser}>{children}</AuthProvider>
+      <AuthProvider>{children}</AuthProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

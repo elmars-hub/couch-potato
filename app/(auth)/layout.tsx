@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import cinemaBg from "@/public/cinema-bg.jpeg";
+import { Toaster } from "react-hot-toast";
+import { generateAuthMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Sign Up | CP",
-  description: "Empowering African youths with tech skills",
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+export const metadata: Metadata = generateAuthMetadata("signup");
 
 export default function AuthLayout({
   children,
@@ -35,6 +31,14 @@ export default function AuthLayout({
       <div className="relative z-10 w-full max-w-md animate-fade-in text-center">
         {children}
       </div>
+
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          className: "!mt-20",
+        }}
+      />
     </div>
   );
 }

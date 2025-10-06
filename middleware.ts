@@ -30,16 +30,24 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session if expired
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Only check auth for protected routes
+  const protectedPaths = ["/profile", "/watchlist", "/favorites"];
+  const isProtectedRoute = protectedPaths.some(path => 
+    request.nextUrl.pathname.startsWith(path)
+  );
 
-  // Protect /profile routes
-  if (!user && request.nextUrl.pathname.startsWith("/profile")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+  if (isProtectedRoute) {
+    // Refresh session if expired
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    // Protect routes
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;
