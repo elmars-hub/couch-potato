@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import cinemaBg from "@/public/cinema-bg.jpeg";
-import { Toaster } from "react-hot-toast";
 import { generateAuthMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = generateAuthMetadata("signup");

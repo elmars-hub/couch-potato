@@ -204,7 +204,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
 
             {/* Action Buttons */}
             <motion.div
-              className="flex flex-wrap gap-2 sm:gap-3 pt-2 mb-6 sm:mb-10"
+              className="flex flex-wrap gap-2 sm:gap-3 pt-2 mb-12 sm:mb-10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.5 }}
@@ -237,7 +237,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
 
       {/* Carousel Controls - Bottom Right */}
       <motion.div
-        className="absolute hidden bottom-8 right-10 md:right-8 z-30 md:flex items-center gap-3"
+        className="absolute bottom-8 right-10 md:right-8 z-30 flex items-center gap-3"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9, duration: 0.5 }}

@@ -12,7 +12,7 @@ const MobileMenuButton = ({ isOpen, onClick }: MobileMenuButtonProps) => {
   return (
     <motion.button
       onClick={onClick}
-      className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors relative z-50"
+      className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors relative z-50 cursor-pointer"
       aria-label={isOpen ? "Close menu" : "Open menu"}
       whileTap={{ scale: 0.9 }}
     >

@@ -38,7 +38,7 @@ export function MovieCarouselControls({
   }, [currentIndex]);
 
   return (
-    <div className="absolute bottom-8 right-10 md:right-8 z-30 flex items-center gap-3">
+    <div className="absolute bottom-8 hidden right-10 md:right-8 z-30 md:flex items-center gap-3">
       <div className="flex gap-2">
         {movies.map((_, i) => (
           <button

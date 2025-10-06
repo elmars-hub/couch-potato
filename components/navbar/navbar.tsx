@@ -9,8 +9,25 @@ import NavbarActions from "./navbarActions";
 import MobileMenuButton from "./menuButton";
 import MobileMenu from "./mobileMenu";
 import { useAuth } from "@/lib/auth-context";
+import Link from "next/link"; // <-- Import Link
+import { Button } from "@/components/ui/button"; // <-- Import Button
+import { Search } from "lucide-react"; // <-- Import Search Icon
 
 const MAX_CONTENT_WIDTH = "max-w-[1800px]";
+
+const MobileSearchButton = () => (
+  <Link href="/search" className="md:hidden">
+    {" "}
+    <Button
+      variant="ghost"
+      size="icon"
+      className="text-white hover:text-white hover:bg-white/10 cursor-pointer rounded-full transition-all"
+      aria-label="Search"
+    >
+      <Search className="w-5 h-5" />
+    </Button>
+  </Link>
+);
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -28,12 +45,10 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -63,11 +78,17 @@ const Navbar = () => {
         >
           <NavbarLogo />
           <NavbarLinks pathname={pathname} />
-          <NavbarActions user={user} isLoading={isLoading} />
-          <MobileMenuButton
-            isOpen={isMobileMenuOpen}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          />
+
+          <div className="flex items-center gap-2">
+            <MobileSearchButton />
+
+            <NavbarActions user={user} isLoading={isLoading} />
+
+            <MobileMenuButton
+              isOpen={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            />
+          </div>
         </div>
       </nav>
 
