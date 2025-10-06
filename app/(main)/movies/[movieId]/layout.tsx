@@ -3,13 +3,17 @@ import { getMediaDetails } from "@/lib/tmdb";
 import { generateMovieMetadata } from "@/lib/metadata";
 
 type Props = {
-  params: { movieId: string };
-  searchParams: { type?: string };
+  params: Promise<{ movieId: string }>;
+  searchParams: Promise<{ type?: string }>;
 };
 
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
-  const movieId = params.movieId;
-  const type = (searchParams.type ?? "movie") as "movie" | "tv";
+export async function generateMetadata({
+  params,
+  searchParams,
+}: Props): Promise<Metadata> {
+  const { movieId } = await params;
+  const resolvedSearchParams = await searchParams;
+  const type = (resolvedSearchParams?.type ?? "movie") as "movie" | "tv";
 
   try {
     const movie = await getMediaDetails(type, movieId);
