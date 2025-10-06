@@ -22,13 +22,6 @@ export function InfiniteMovieGrid({
   onLoadMore,
   showRanking = true,
 }: InfiniteMovieGridProps) {
-  console.log(
-    "[v0] InfiniteMovieGrid - movies count:",
-    movies.length,
-    "isLoading:",
-    isLoading
-  );
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -119,7 +112,7 @@ export function InfiniteMovieGrid({
             onClick={onLoadMore}
             disabled={isFetchingNextPage}
             size="lg"
-            className="bg-red-600 hover:bg-red-700 text-white px-8"
+            className="bg-red-600 hover:bg-red-700 cursor-pointer text-white px-8"
           >
             {isFetchingNextPage ? (
               <>

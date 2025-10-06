@@ -202,7 +202,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -235,11 +235,11 @@
     .mobile-padding {
       @apply px-4;
     }
-    
+
     .mobile-text {
       @apply text-sm;
     }
-    
+
     .mobile-button {
       @apply py-2 px-4 text-sm;
     }
@@ -281,25 +281,25 @@
 /* Mobile-specific styles */
 @media (max-width: 768px) {
   /* Improve touch targets */
-  button, a {
+  /* button, a {
     min-height: 44px;
     min-width: 44px;
-  }
-  
+  } */
+
   /* Better spacing for mobile */
   .container {
     @apply px-4;
   }
-  
+
   /* Mobile-optimized text sizes */
   h1 {
     @apply text-2xl;
   }
-  
+
   h2 {
     @apply text-xl;
   }
-  
+
   h3 {
     @apply text-lg;
   }

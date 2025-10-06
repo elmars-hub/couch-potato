@@ -34,7 +34,6 @@ interface CategoryPageClientProps {
 export function CategoryPageClient({ category }: CategoryPageClientProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category>(category);
 
-  // Sync state with prop on mount and prop changes
   useEffect(() => {
     setSelectedCategory(category);
   }, [category]);
@@ -50,8 +49,6 @@ export function CategoryPageClient({ category }: CategoryPageClientProps) {
 
   const currentCategory = CATEGORIES.find((cat) => cat.id === selectedCategory);
   const allMovies = data?.pages.flatMap((page) => page.results) ?? [];
-
-  // Remove debug logs in production
 
   return (
     <motion.div
@@ -167,7 +164,7 @@ export function CategoryPageClient({ category }: CategoryPageClientProps) {
                     whileHover={{ scale: 1.02 }}
                     className="group relative"
                   >
-                    <Link href={`/movie/${movie.id}`}>
+                    <Link href={`/movies/${movie.id}`}>
                       <div className="absolute -left-1 -top-1 z-10 w-6 h-6 sm:w-8 sm:h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm shadow-lg">
                         {index + 1}
                       </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -32,13 +33,21 @@ export default function SearchPage() {
     function onKey(e: KeyboardEvent) {
       if (!results.length) return;
       const cols = 6;
-      if (e.key === "ArrowRight") setFocusedIndex((i) => Math.min(i + 1, results.length - 1));
+      if (e.key === "ArrowRight")
+        setFocusedIndex((i) => Math.min(i + 1, results.length - 1));
       if (e.key === "ArrowLeft") setFocusedIndex((i) => Math.max(i - 1, 0));
-      if (e.key === "ArrowDown") setFocusedIndex((i) => Math.min((i < 0 ? 0 : i) + cols, results.length - 1));
-      if (e.key === "ArrowUp") setFocusedIndex((i) => Math.max((i < 0 ? 0 : i) - cols, 0));
+      if (e.key === "ArrowDown")
+        setFocusedIndex((i) =>
+          Math.min((i < 0 ? 0 : i) + cols, results.length - 1)
+        );
+      if (e.key === "ArrowUp")
+        setFocusedIndex((i) => Math.max((i < 0 ? 0 : i) - cols, 0));
       if (e.key === "Enter" && focusedIndex >= 0) {
         const item: any = results[focusedIndex];
-        const href = item.media_type === "tv" ? `/tvshows/${item.id}` : `/movies/${item.id}?type=movie`;
+        const href =
+          item.media_type === "tv"
+            ? `/tvshows/${item.id}`
+            : `/movies/${item.id}?type=movie`;
         window.location.href = href;
       }
     }
@@ -72,7 +81,12 @@ export default function SearchPage() {
             <div className="mt-4 text-white/60 text-sm">
               <div className="flex items-center justify-between mb-2">
                 <span>Recent searches</span>
-                <button onClick={clearRecent} className="text-white/50 hover:text-white/80">Clear</button>
+                <button
+                  onClick={clearRecent}
+                  className="text-white/50 hover:text-white/80 cursor-pointer"
+                >
+                  Clear
+                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {recent.map((r) => (
@@ -82,7 +96,7 @@ export default function SearchPage() {
                       setInput(r);
                       setQuery(r);
                     }}
-                    className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full"
+                    className="px-3 py-1 bg-white/10 hover:bg-white/20 cursor-pointer rounded-full"
                   >
                     {r}
                   </button>
@@ -96,8 +110,15 @@ export default function SearchPage() {
           {!query && (
             <div className="space-y-4">
               <h2 className="text-lg font-semibold">Top Searches</h2>
-              <div className="flex flex-wrap gap-2">
-                {["Top Rated", "Action", "Comedy", "Horror", "Anime", "Popular"].map((t) => {
+              <div className="flex flex-wrap gap-2 ">
+                {[
+                  "Top Rated",
+                  "Action",
+                  "Comedy",
+                  "Horror",
+                  "Anime",
+                  "Popular",
+                ].map((t) => {
                   const map: Record<string, string> = {
                     "Top Rated": "top-rated",
                     Popular: "popular",
@@ -114,7 +135,7 @@ export default function SearchPage() {
                         saveRecent(t);
                         router.push(`/category/${category}`);
                       }}
-                      className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full"
+                      className="px-3 cursor-pointer py-1 bg-white/10 hover:bg-white/20 rounded-full"
                     >
                       {t}
                     </button>
@@ -126,7 +147,10 @@ export default function SearchPage() {
           {isLoading && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {Array.from({ length: 12 }).map((_, i) => (
-                <div key={i} className="relative aspect-[2/3] bg-white/10 rounded animate-pulse" />
+                <div
+                  key={i}
+                  className="relative aspect-[2/3] bg-white/10 rounded animate-pulse"
+                />
               ))}
             </div>
           )}
@@ -144,17 +168,24 @@ export default function SearchPage() {
                   <Link
                     key={`${item.media_type}-${item.id}`}
                     href={href}
-                    className={`group outline-none ${focusedIndex === i ? "ring-2 ring-red-600 rounded" : ""}`}
+                    className={`group outline-none ${
+                      focusedIndex === i ? "ring-2 ring-red-600 rounded" : ""
+                    }`}
                   >
                     <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-gray-800">
                       <Image
-                        src={getImageUrl(item.poster_path || item.profile_path, "w500")}
+                        src={getImageUrl(
+                          item.poster_path || item.profile_path,
+                          "w500"
+                        )}
                         alt={item.title || item.name}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>
-                    <div className="mt-2 text-sm line-clamp-1">{item.title || item.name}</div>
+                    <div className="mt-2 text-sm line-clamp-1">
+                      {item.title || item.name}
+                    </div>
                   </Link>
                 );
               })}
@@ -165,5 +196,3 @@ export default function SearchPage() {
     </main>
   );
 }
-
-

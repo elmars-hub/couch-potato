@@ -36,7 +36,7 @@ export function TvCarouselControls({
   }, [currentIndex]);
 
   return (
-    <div className="absolute hidden bottom-8 right-10 md:right-8 z-30 md:flex items-center gap-3">
+    <div className="absolute bottom-8 right-10 md:right-8 z-30 flex items-center gap-3">
       {shows.map((_, i) => (
         <button
           key={i}

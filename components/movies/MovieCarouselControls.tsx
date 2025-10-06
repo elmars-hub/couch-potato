@@ -38,19 +38,19 @@ export function MovieCarouselControls({
   }, [currentIndex]);
 
   return (
-    <div className="absolute bottom-8 hidden right-10 md:right-8 z-30 md:flex items-center gap-3">
+    <div className="absolute bottom-8 right-10 md:right-8 z-30 flex items-center gap-3">
       <div className="flex gap-2">
         {movies.map((_, i) => (
           <button
             key={i}
             onClick={() => onSlideChange(i)}
-            className="relative h-1 w-8 md:w-12 bg-gray-600/50 hover:bg-gray-400/50 transition-colors overflow-hidden rounded-full"
+            className="relative h-1 w-12 bg-gray-600/50 hover:bg-gray-400/50 transition-colors overflow-hidden rounded-full"
             aria-label={`Go to slide ${i + 1}`}
           >
             {i === currentIndex && (
               <div
                 id={`progress-${currentIndex}`}
-                className="absolute inset-0 bg-red-600 rounded-full"
+                className="absolute inset-0 bg-red-600 rounded-full "
                 style={{ width: "0%", transition: "none" }}
               />
             )}

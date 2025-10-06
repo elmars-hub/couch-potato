@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -53,9 +54,7 @@ export default function MoviesClient({ initialMovies }: MoviesClientProps) {
 
   return (
     <>
-      <h2 className="mb-2 text-2xl font-semibold text-white">
-        Browse Movies
-      </h2>
+      <h2 className="mb-2 text-2xl font-semibold text-white">Browse Movies</h2>
       <GenreFilter type="movie" value={genre} onChange={setGenre} />
 
       {loading && items.length === 0 ? (
@@ -111,11 +110,7 @@ export default function MoviesClient({ initialMovies }: MoviesClientProps) {
           disabled={!hasMore || loading}
           className="px-6 py-3 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-60"
         >
-          {loading
-            ? "Loading..."
-            : hasMore
-            ? "Load More"
-            : "No more results"}
+          {loading ? "Loading..." : hasMore ? "Load More" : "No more results"}
         </button>
       </div>
     </>
