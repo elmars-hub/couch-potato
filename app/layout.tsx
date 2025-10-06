@@ -40,6 +40,7 @@ export default async function RootLayout({
           position="top-right"
           toastOptions={{
             duration: 4000,
+            className: "!mt-20",
           }}
         />
       </body>

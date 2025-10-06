@@ -51,28 +51,26 @@ export function ProfileForm({ user }: ProfileFormProps) {
     }
   };
 
-  const handleReset = () => {
-    setName(user.name || "");
-    toast.dismiss();
-  };
+  // const handleReset = () => {
+  //   setName(user.name || "");
+  //   toast.dismiss();
+  // };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex  gap-2">
           <User className="h-5 w-5" />
           Profile Settings
         </CardTitle>
-        <CardDescription>
-          Update your display name
-        </CardDescription>
+        <CardDescription>Update your display name</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Current Avatar Display */}
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center gap-4">
           <Avatar className="h-20 w-20">
-            <AvatarImage 
-              src={getAvatarUrl(user.email, 80)} 
+            <AvatarImage
+              src="https://github.com/shadcn.png"
               alt={`${user.name || user.email}'s avatar`}
             />
             <AvatarFallback className="text-lg">
@@ -82,7 +80,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
           <div>
             <p className="font-medium">{user.name || "User"}</p>
             <p className="text-sm text-muted-foreground">{user.email}</p>
-            <p className="text-xs text-muted-foreground">Avatar generated from email</p>
           </div>
         </div>
 
@@ -99,8 +96,14 @@ export function ProfileForm({ user }: ProfileFormProps) {
             />
           </div>
 
-          <div className="flex gap-2 items-center justify-center">
-            <Button type="submit" disabled={submitting} className={`bg-red-600 hover:bg-red-700 ${submitting ? "opacity-80" : ""}`}>
+          <div className="flex gap-2 items-center ">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className={`bg-red-600 hover:bg-red-700 cursor-pointer ${
+                submitting ? "opacity-80" : ""
+              }`}
+            >
               {submitting ? (
                 <span className="flex items-center gap-2">
                   <span className="inline-block h-4 w-4 border-2 border-white/70 border-t-transparent rounded-full animate-spin" />
@@ -110,12 +113,8 @@ export function ProfileForm({ user }: ProfileFormProps) {
                 "Update Profile"
               )}
             </Button>
-            <Button type="button" variant="outline" onClick={handleReset} disabled={submitting}>
-              Reset
-            </Button>
           </div>
         </form>
-
       </CardContent>
     </Card>
   );

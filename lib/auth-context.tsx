@@ -140,7 +140,16 @@ export function AuthProvider({
         throw new Error(err.response?.data?.message || "Failed to update user");
       }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth-user"] }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["auth-user"],
+        exact: true,
+      });
+      await queryClient.refetchQueries({
+        queryKey: ["auth-user"],
+        exact: true,
+      });
+    },
   });
 
   const authLoading =
@@ -150,7 +159,7 @@ export function AuthProvider({
     updateProfileMutation.isPending;
 
   const contextValue: AuthContextType = {
-    user: (initialUser ?? user) ?? null,
+    user: initialUser ?? user ?? null,
     isLoading: !isHydrated || userLoading,
     authLoading,
     signIn: async (email, password) => {

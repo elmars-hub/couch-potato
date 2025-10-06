@@ -39,9 +39,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#141414] text-white mt-24">
+    <div className="min-h-screen bg-[#141414] text-white mt-16 md:mt-24">
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-3xl mx-auto space-y-8 text-center">
+        <div className="max-w-3xl mx-auto space-y-8">
           <div>
             <h1 className="text-3xl font-bold">Profile</h1>
             <p className="text-white/60">Manage your account and preferences</p>
@@ -50,10 +50,15 @@ export default function ProfilePage() {
           {/* Profile Update Form */}
           <ProfileForm user={user} />
 
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center  gap-4">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={getAvatarUrl(user.email, 64)} alt={`${user.name || user.email}'s avatar`} />
-              <AvatarFallback className="text-lg">{getInitials(user.name, user.email)}</AvatarFallback>
+              <AvatarImage
+                src="https://github.com/shadcn.png"
+                alt={`${user.name || user.email}'s avatar`}
+              />
+              <AvatarFallback className="text-lg">
+                {getInitials(user.name, user.email)}
+              </AvatarFallback>
             </Avatar>
             <div className="text-left">
               <p className="font-semibold">{user.name || "User"}</p>
@@ -73,7 +78,10 @@ export default function ProfilePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button asChild className="w-full">
+                <Button
+                  asChild
+                  className="w-full bg-red-600  font-medium hover:bg-red-700 text-white"
+                >
                   <Link href="/profile/likes">View Likes</Link>
                 </Button>
               </CardContent>
@@ -90,14 +98,15 @@ export default function ProfilePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button asChild className="w-full">
+                <Button
+                  asChild
+                  className="w-full bg-red-600  font-medium hover:bg-red-700 text-white"
+                >
                   <Link href="/watchlist">View Watchlist</Link>
                 </Button>
               </CardContent>
             </Card>
           </div>
-
-          
 
           <div className="flex justify-center">
             <Button variant="outline" asChild>

@@ -102,7 +102,7 @@ const NavbarActions = ({ user, isLoading }: NavbarActionsProps) => {
                 >
                   <div className="p-3 border-b border-white/10">
                     <p className="text-white font-medium text-sm truncate">
-                      {user.email}
+                      {user.name}
                     </p>
                     <p className="text-gray-400 text-xs mt-1">
                       Manage your account
