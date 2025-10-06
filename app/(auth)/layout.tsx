@@ -31,14 +31,6 @@ export default function AuthLayout({
       <div className="relative z-10 w-full max-w-md animate-fade-in text-center">
         {children}
       </div>
-
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          className: "!mt-20",
-        }}
-      />
     </div>
   );
 }
