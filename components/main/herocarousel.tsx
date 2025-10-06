@@ -211,7 +211,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
             >
               <Link href={`/movies/${currentMovie.id}`}>
                 <motion.button
-                  className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-white text-black font-semibold hover:bg-white/90 transition-all shadow-lg text-sm sm:text-base"
+                  className="flex items-center cursor-pointer gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-white text-black font-semibold hover:bg-white/90 transition-all shadow-lg text-sm sm:text-base"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -222,7 +222,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
 
               <Link href={`/movies/${currentMovie.id}`}>
                 <motion.button
-                  className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-gray-500/70 backdrop-blur-sm text-white font-semibold hover:bg-gray-500/90 transition-all border border-gray-400/30 text-sm sm:text-base"
+                  className="flex items-center cursor-pointer gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md bg-gray-500/70 backdrop-blur-sm text-white font-semibold hover:bg-gray-500/90 transition-all border border-gray-400/30 text-sm sm:text-base"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -247,7 +247,7 @@ export function HeroCarousel({ movies }: HeroCarouselProps) {
             <motion.button
               key={i}
               onClick={() => goToSlide(i)}
-              className="relative h-1 w-8 bg-gray-600/50 hover:bg-gray-400/50 transition-colors overflow-hidden rounded-full"
+              className="relative h-1 w-8 bg-gray-600/50 hover:bg-gray-400/50 transition-colors overflow-hidden rounded-full cursor-pointer"
               aria-label={`Go to slide ${i + 1}`}
               // whileHover={{ scale: 1.1 }}
               // whileTap={{ scale: 0.95 }}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -105,13 +106,9 @@ export default function TvShowsClient({ initialTVShows }: TvShowsClientProps) {
         <button
           onClick={() => setPage((p) => p + 1)}
           disabled={!hasMore || loading}
-          className="px-6 py-3 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-60"
+          className="px-6 py-3 rounded-md bg-red-600 text-white cursor-pointer font-semibold hover:bg-red-700 disabled:opacity-60"
         >
-          {loading
-            ? "Loading..."
-            : hasMore
-            ? "Load More"
-            : "No more results"}
+          {loading ? "Loading..." : hasMore ? "Load More" : "No more results"}
         </button>
       </div>
     </>
