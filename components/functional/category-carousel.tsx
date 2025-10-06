@@ -76,7 +76,7 @@ export function CategoryCarousel({
           <Link href={`/category/${categoryId}`} prefetch>
             <Button
               variant="ghost"
-              className="text-white hover:text-red-500 gap-2 group text-sm sm:text-base"
+              className="text-white hover:text-red-500 gap-2 group cursor-pointer text-sm sm:text-base"
             >
               More
               <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
