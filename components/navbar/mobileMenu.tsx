@@ -9,6 +9,7 @@ import { Search, User, LogOut, Bell } from "lucide-react";
 import { navLinks } from "./navbarLinks";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -84,12 +85,14 @@ const MobileMenu = ({
                     }}
                     className="flex items-center gap-3 p-4 bg-gradient-to-r from-red-600/20 to-red-800/20 rounded-xl border border-red-500/20"
                   >
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center">
-                      <User className="w-6 h-6 text-white" />
-                    </div>
+                    <Avatar className="">
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>U</AvatarFallback>
+                    </Avatar>
+
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-semibold text-sm truncate">
-                        {user.email?.split("@")[0] || "User"}
+                        {user.name}
                       </p>
                       <p className="text-gray-400 text-xs truncate">
                         {user.email}

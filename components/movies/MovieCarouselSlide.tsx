@@ -7,7 +7,10 @@ interface MovieCarouselSlideProps {
   currentIndex: number;
 }
 
-export function MovieCarouselSlide({ movies, currentIndex }: MovieCarouselSlideProps) {
+export function MovieCarouselSlide({
+  movies,
+  currentIndex,
+}: MovieCarouselSlideProps) {
   return (
     <>
       {movies.map((movie, i) => {

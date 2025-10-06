@@ -13,7 +13,11 @@ interface MovieCardProps {
   ranking?: number;
 }
 
-export function MovieCard({ movie, showRanking = false, ranking }: MovieCardProps) {
+export function MovieCard({
+  movie,
+  showRanking = false,
+  ranking,
+}: MovieCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -31,10 +35,9 @@ export function MovieCard({ movie, showRanking = false, ranking }: MovieCardProp
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
           />
-          
-          {/* Ranking Badge */}
+
           {showRanking && ranking && (
-            <motion.div 
+            <motion.div
               className="absolute top-1 sm:top-2 left-1 sm:left-2 bg-red-600 text-white text-xs font-bold px-1 sm:px-2 py-1 rounded"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -43,9 +46,8 @@ export function MovieCard({ movie, showRanking = false, ranking }: MovieCardProp
               #{ranking}
             </motion.div>
           )}
-          
-          {/* Hover Overlay */}
-          <motion.div 
+
+          <motion.div
             className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             initial={{ opacity: 0 }}
             whileHover={{ opacity: 1 }}
@@ -68,7 +70,9 @@ export function MovieCard({ movie, showRanking = false, ranking }: MovieCardProp
             </div>
           </motion.div>
         </div>
-        <div className="mt-2 text-xs sm:text-sm line-clamp-1 text-white/90">{movie.title}</div>
+        <div className="mt-2 text-xs sm:text-sm line-clamp-1 text-white/90">
+          {movie.title}
+        </div>
       </Link>
     </motion.div>
   );
