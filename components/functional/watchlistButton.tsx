@@ -44,7 +44,7 @@ export default function WatchlistButton({
           }
         );
       }}
-      className="p-2"
+      className="p-2 cursor-pointer hover:scale-y-90"
     >
       <Bookmark
         className={`w-6 h-6 transition-colors duration-200 ${

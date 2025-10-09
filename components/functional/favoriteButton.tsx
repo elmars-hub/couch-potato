@@ -28,7 +28,7 @@ export function FavoriteButton({
         }
         toggleFavorite.mutate({ mediaId, mediaType, isFavorite });
       }}
-      className="p-2"
+      className="p-2 cursor-pointer"
     >
       <Heart
         className={`w-6 h-6 transition-colors duration-200 ${
