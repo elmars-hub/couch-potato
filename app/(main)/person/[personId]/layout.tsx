@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getPerson } from "@/lib/tmdb";
+import { getPerson } from "@/lib/tmdb/person";
 import { generatePersonMetadata } from "@/lib/metadata";
 
 type Props = {

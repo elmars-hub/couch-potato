@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
 
 interface CreditItem {
   id: number;

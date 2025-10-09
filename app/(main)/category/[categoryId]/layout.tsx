@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Metadata } from "next";
-import { getMoviesByCategory } from "@/lib/tmdb";
+import { getMoviesByCategory } from "@/lib/tmdb/movies";
 import { generateCategoryMetadata } from "@/lib/metadata";
 
 type Props = {

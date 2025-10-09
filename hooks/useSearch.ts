@@ -1,6 +1,6 @@
 // src/hooks/useSearch.ts
 import { useQuery } from "@tanstack/react-query";
-import { searchMulti } from "@/lib/tmdb";
+import { searchMulti } from "@/lib/tmdb/search";
 
 export function useSearch(query: string, page = 1) {
   return useQuery({

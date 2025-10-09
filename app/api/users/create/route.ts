@@ -1,36 +1,31 @@
-// app/api/auth/sync-user/route.ts
-
+// app/api/users/create/route.ts
 import { prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import type { User as PrismaUser } from "@prisma/client";
 
-async function syncUser() {
+export async function POST(req: Request) {
   try {
-    if (!prisma) {
-      return NextResponse.json(
-        { error: "Database not available" },
-        { status: 503 }
-      );
-    }
-
     const supabase = await createClient();
+
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
     const {
       data: { user: authUser },
-      error: authError,
-    } = await supabase.auth.getUser();
+      error,
+    } = await supabase.auth.getUser(token);
 
-    if (authError || !authUser) {
+    if (error || !authUser) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
+    // Ensure email exists
     if (!authUser.email) {
-      return NextResponse.json(
-        { error: "User email missing" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Email missing" }, { status: 400 });
     }
 
+    // Prepare update fields
     const updates = {
       email: authUser.email,
       ...(authUser.user_metadata?.name && {
@@ -41,6 +36,7 @@ async function syncUser() {
       }),
     };
 
+    // Insert or update user in DB
     const user = await prisma.user.upsert({
       where: { id: authUser.id },
       update: updates,
@@ -53,28 +49,11 @@ async function syncUser() {
     });
 
     return NextResponse.json<{ user: PrismaUser }>({ user });
-  } catch (error) {
-    console.error("Error syncing user:", error);
+  } catch (err) {
+    console.error("Error creating user:", err);
     return NextResponse.json(
-      {
-        error: "Failed to sync user",
-        details:
-          process.env.NODE_ENV === "development"
-            ? error instanceof Error
-              ? error.message
-              : String(error)
-            : undefined,
-      },
+      { error: "Failed to create user" },
       { status: 500 }
     );
   }
-}
-
-export async function POST() {
-  return syncUser();
-}
-
-// optional, if you want GET for debugging only
-export async function GET() {
-  return syncUser();
 }

@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Movie } from "@/lib/tmdb";
-import { getImageUrl, getYear } from "@/lib/tmdb";
+import type { Movie } from "@/lib/tmdb/movies";
+import { getImageUrl, getYear } from "@/lib/tmdb/fetcher";
 import { motion } from "framer-motion";
 
 interface CategoryCarouselProps {

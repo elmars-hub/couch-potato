@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchDetails, fetchCredits, fetchVideos } from "@/lib/tmdb";
+import { fetchDetails, fetchCredits, fetchVideos } from "@/lib/tmdb/search";
 
 // Types
 export interface Cast {

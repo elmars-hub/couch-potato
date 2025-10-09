@@ -13,15 +13,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/lib/auth-context";
-import { getAvatarUrl, getInitials } from "@/lib/avatar";
+import { getInitials } from "@/lib/avatar";
 import { User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ProfileFormProps {
   user: {
     id: string;
     email: string;
-    name: string | null;
+    name?: string | null;
     avatarUrl?: string | null;
   };
 }
@@ -74,7 +74,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
               alt={`${user.name || user.email}'s avatar`}
             />
             <AvatarFallback className="text-lg">
-              {getInitials(user.name, user.email)}
+              {getInitials(user.name ?? null, user.email ?? null)}
             </AvatarFallback>
           </Avatar>
           <div>

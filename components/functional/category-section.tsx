@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { CategoryCarousel } from "@/components/functional/category-carousel";
-import { getMoviesByCategory, type TMDBResponse } from "@/lib/tmdb";
+import { getMoviesByCategory } from "@/lib/tmdb/movies";
+import type { TMDBResponse } from "@/lib/tmdb/fetcher";
 
 export default function CategorySection({
   title,

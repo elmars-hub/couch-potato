@@ -4,7 +4,8 @@ import React from "react";
 import { useFavorites } from "@/hooks/useFavourites";
 import Image from "next/image";
 import Link from "next/link";
-import { getImageUrl, fetchDetails } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
+import { fetchDetails } from "@/lib/tmdb/search";
 
 export default function LikesHistoryPage() {
   const { data, isLoading } = useFavorites();

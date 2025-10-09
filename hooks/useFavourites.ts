@@ -1,6 +1,7 @@
 // src/hooks/useFavorites.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { createClient as createBrowserClient } from "@/lib/supabase/client";
 
 export type MediaType = "movie" | "tv";
 
@@ -17,10 +18,19 @@ export function useFavorites() {
   return useQuery<FavoriteItem[]>({
     queryKey: ["favorites"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/favorites");
-      return data;
+      const supabase = createBrowserClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) return [];
+      const { data } = await axios.get("/api/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return data as FavoriteItem[];
     },
     staleTime: 1000 * 60 * 2,
+    retry: false,
   });
 }
 
@@ -38,17 +48,28 @@ export function useToggleFavorite() {
       mediaType: MediaType;
       isFavorite: boolean;
     }) => {
+      const supabase = createBrowserClient();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
       if (isFavorite) {
         const { data } = await axios.delete("/api/favorites", {
           params: { mediaId, mediaType },
+          headers,
         });
         return data;
       }
 
-      const { data } = await axios.post("/api/favorites", {
-        mediaId,
-        mediaType,
-      });
+      const { data } = await axios.post(
+        "/api/favorites",
+        {
+          mediaId,
+          mediaType,
+        },
+        { headers }
+      );
       return data;
     },
 

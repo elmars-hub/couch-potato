@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 import { Search, User, LogOut, Bell } from "lucide-react";
 import { navLinks } from "./navbarLinks";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "@/lib/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAuth } from "@/hooks/useAuth";
 
 interface MobileMenuProps {
   isOpen: boolean;

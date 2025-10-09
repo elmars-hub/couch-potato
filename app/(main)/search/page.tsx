@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearch } from "@/hooks/useSearch";
 import Image from "next/image";
 import Link from "next/link";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
 import { useRouter } from "next/navigation";
 
 export default function SearchPage() {

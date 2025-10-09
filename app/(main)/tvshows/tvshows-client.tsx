@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { getPopularTVShows, discoverTv } from "@/lib/tmdb";
+import { getPopularTVShows, discoverTv } from "@/lib/tmdb/tv";
 import { getImageUrl } from "@/helpers/url";
 import { getYear } from "@/helpers/date";
 import GenreFilter from "@/components/functional/genre-filter";

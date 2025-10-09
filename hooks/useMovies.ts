@@ -5,7 +5,7 @@ import {
   getPopularMovies,
   getMovieDetails,
   getNowPlayingMovies,
-} from "@/lib/tmdb";
+} from "@/lib/tmdb/movies";
 
 export function useTrendingMovies() {
   return useQuery({

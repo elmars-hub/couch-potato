@@ -2,7 +2,8 @@
 
 import React from "react";
 import { useWatchlist } from "@/hooks/useWatchlist";
-import { getImageUrl, fetchDetails } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
+import { fetchDetails } from "@/lib/tmdb/search";
 import Image from "next/image";
 import Link from "next/link";
 

@@ -8,10 +8,10 @@ import NavbarLinks from "./navbarLinks";
 import NavbarActions from "./navbarActions";
 import MobileMenuButton from "./menuButton";
 import MobileMenu from "./mobileMenu";
-import { useAuth } from "@/lib/auth-context";
-import Link from "next/link"; // <-- Import Link
-import { Button } from "@/components/ui/button"; // <-- Import Button
-import { Search } from "lucide-react"; // <-- Import Search Icon
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { useAuthContext } from "@/lib/auth-context";
 
 const MAX_CONTENT_WIDTH = "max-w-[1800px]";
 
@@ -34,7 +34,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useAuthContext();
 
   useEffect(() => {
     const handleScroll = () => {

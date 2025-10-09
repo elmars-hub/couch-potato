@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
 import { motion } from "framer-motion";
 
 function useAutoLoadMore(ref: React.RefObject<HTMLDivElement | null>, onLoad?: () => void) {

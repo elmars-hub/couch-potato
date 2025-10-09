@@ -1,6 +1,7 @@
 // src/hooks/useDiscover.ts
 import { useQuery } from "@tanstack/react-query";
-import { discoverMovies, discoverTv } from "@/lib/tmdb";
+import { discoverMovies } from "@/lib/tmdb/movies";
+import { discoverTv } from "@/lib/tmdb/tv";
 
 interface DiscoverParams {
   page?: number;

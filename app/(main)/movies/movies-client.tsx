@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import GenreFilter from "@/components/functional/genre-filter";
-import { discoverMovies, getPopularMovies } from "@/lib/tmdb";
+import { discoverMovies, getPopularMovies } from "@/lib/tmdb/movies";
 import { getImageUrl } from "@/helpers/url";
 import { getYear } from "@/helpers/date";
 import { GridSkeleton } from "@/components/general/GridSkeleton";

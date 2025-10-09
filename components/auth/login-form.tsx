@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Film } from "lucide-react";
-import { useAuth } from "@/lib/auth-context";
 import { Spinner } from "../ui/spinner";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 export function LoginForm() {
   const { signIn, authLoading } = useAuth();

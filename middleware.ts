@@ -2,10 +2,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const PROTECTED_PREFIXES = ["/profile", "/watchlist"]; // app routes requiring auth
+
+function isProtectedPath(pathname: string): boolean {
+  return PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,33 +20,23 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            request.cookies.set(name, value)
-          );
-          supabaseResponse = NextResponse.next({
-            request,
+          // Update request cookies and sync them onto the response with options
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            supabaseResponse.cookies.set(name, value, options);
           });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
         },
       },
     }
   );
 
-  // Only check auth for protected routes
-  const protectedPaths = ["/profile", "/watchlist", "/favorites"];
-  const isProtectedRoute = protectedPaths.some(path => 
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isProtectedRoute = isProtectedPath(request.nextUrl.pathname);
 
   if (isProtectedRoute) {
-    // Refresh session if expired
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    // Protect routes
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
@@ -54,5 +48,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/dashboard/:path*", "/favorites", "/watchlist"],
+  matcher: ["/profile/:path*", "/watchlist/:path*", "/api/:path*"],
 };

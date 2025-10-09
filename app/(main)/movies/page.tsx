@@ -1,4 +1,4 @@
-import { getTrendingMovies, getPopularMovies } from "@/lib/tmdb";
+import { getTrendingMovies, getPopularMovies } from "@/lib/tmdb/movies";
 import { MovieCarousel } from "@/components/movies/MovieCarousel";
 import CategorySection from "@/components/functional/category-section";
 import MoviesClient from "./movies-client";

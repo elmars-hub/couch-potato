@@ -7,7 +7,8 @@ import { ChevronRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useInfiniteMoviesByCategory } from "@/hooks/useInfiniteMovies";
-import { getImageUrl, getYear, type Category } from "@/lib/tmdb";
+import { getImageUrl, getYear } from "@/lib/tmdb/fetcher";
+import type { Category } from "@/lib/tmdb/movies";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CATEGORIES = [

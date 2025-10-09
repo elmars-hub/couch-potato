@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/lib/auth-context";
+import { useAuthContext } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAvatarUrl, getInitials } from "@/lib/avatar";
 
 export default function ProfilePage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useAuthContext();
   const router = useRouter();
 
   if (isLoading) {
@@ -57,7 +57,7 @@ export default function ProfilePage() {
                 alt={`${user.name || user.email}'s avatar`}
               />
               <AvatarFallback className="text-lg">
-                {getInitials(user.name, user.email)}
+                {getInitials(user.name ?? null, user.email ?? null)}
               </AvatarFallback>
             </Avatar>
             <div className="text-left">

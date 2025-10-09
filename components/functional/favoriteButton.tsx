@@ -1,8 +1,8 @@
 import { Heart } from "lucide-react";
 import { useIsFavorite, useToggleFavorite } from "@/hooks/useFavourites";
-import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useAuthContext } from "@/lib/auth-context";
 
 export function FavoriteButton({
   mediaId,
@@ -13,7 +13,7 @@ export function FavoriteButton({
 }) {
   const isFavorite = useIsFavorite(mediaId, mediaType);
   const toggleFavorite = useToggleFavorite();
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const router = useRouter();
 
   return (

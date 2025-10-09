@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TvCarousel } from "@/components/main/tvcarousel";
-import { getPopularTVShows, type TMDBResponse } from "@/lib/tmdb";
+import { TvCarousel } from "@/components/tv/TvCarousel";
+import { getPopularTVShows } from "@/lib/tmdb/tv";
+import type { TMDBResponse } from "@/lib/tmdb/fetcher";
 
 export default function CategorySectionTV({ title }: { title: string }) {
   const [data, setData] = useState<TMDBResponse | null>(null);

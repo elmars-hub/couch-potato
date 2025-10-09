@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Search, Bell, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { useAuth } from "@/lib/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAuth } from "@/hooks/useAuth";
 
 interface NavbarActionsProps {
   user: any;

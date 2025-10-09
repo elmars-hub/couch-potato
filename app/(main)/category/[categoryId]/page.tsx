@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { CategoryPageClient } from "./category-page-client";
-import type { Category } from "@/lib/tmdb";
+import type { Category } from "@/lib/tmdb/movies";
 
 interface CategoryPageProps {
   params: { categoryId: string };

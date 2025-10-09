@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getMediaDetails } from "@/lib/tmdb";
+import { getMediaDetails } from "@/lib/tmdb/search";
 import { generateMovieMetadata } from "@/lib/metadata";
 
 type Props = {

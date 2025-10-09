@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Play, Info } from "lucide-react";
 import { useNowPlayingMovies } from "@/hooks/useMovies";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
 import { motion, AnimatePresence } from "framer-motion";
 
 const MAX_CONTENT_WIDTH_CLASS = "max-w-[1800px]";

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getGenres } from "@/lib/tmdb";
+import { getGenres } from "@/lib/tmdb/search";
 
 interface Genre {
   id: number;

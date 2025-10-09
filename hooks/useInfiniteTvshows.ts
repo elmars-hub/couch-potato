@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getPopularTVShows } from "@/lib/tmdb";
+import { getPopularTVShows } from "@/lib/tmdb/tv";
 
 export function useInfinitePopularTv() {
   return useInfiniteQuery({

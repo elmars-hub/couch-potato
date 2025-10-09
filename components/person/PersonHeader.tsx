@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { getImageUrl } from "@/lib/tmdb";
+import { getImageUrl } from "@/lib/tmdb/fetcher";
 
 interface PersonHeaderProps {
   name: string;

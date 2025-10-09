@@ -1,4 +1,4 @@
-import { getTrendingTVShows, getPopularTVShows } from "@/lib/tmdb";
+import { getTrendingTVShows, getPopularTVShows } from "@/lib/tmdb/tv";
 import { TvCarousel } from "@/components/tv/TvCarousel";
 import TvShowsClient from "./tvshows-client";
 

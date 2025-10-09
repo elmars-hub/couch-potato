@@ -4,9 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 // GET all favorites for current user
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const user = await getCurrentUser();
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    const user = await getCurrentUser(token);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -30,7 +32,9 @@ export async function GET() {
 // POST add to favorites
 export async function POST(request: Request) {
   try {
-    const user = await getCurrentUser();
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    const user = await getCurrentUser(token);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -108,7 +112,9 @@ export async function POST(request: Request) {
 // DELETE remove from favorites
 export async function DELETE(request: Request) {
   try {
-    const user = await getCurrentUser();
+    const authHeader = request.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    const user = await getCurrentUser(token);
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

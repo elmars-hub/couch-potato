@@ -1,6 +1,6 @@
 // hooks/useInfiniteMovies.ts
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { getMoviesByCategory, type Category } from "@/lib/tmdb";
+import { getMoviesByCategory, type Category } from "@/lib/tmdb/movies";
 
 export function useInfiniteMoviesByCategory(category: Category) {
   return useInfiniteQuery({

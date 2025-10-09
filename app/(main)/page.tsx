@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CategoryCarousel } from "@/components/functional/category-carousel";
 import { HeroCarousel } from "@/components/main/herocarousel";
-import { getMoviesByCategory, getNowPlayingMovies } from "@/lib/tmdb";
+import { getMoviesByCategory, getNowPlayingMovies } from "@/lib/tmdb/movies";
 import HomeInfiniteFeed from "@/components/functional/home-infinite-feed";
 
 export const metadata: Metadata = {
