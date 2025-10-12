@@ -1,4 +1,3 @@
-// src/hooks/useSearch.ts
 import { useQuery } from "@tanstack/react-query";
 import { searchMulti } from "@/lib/tmdb/search";
 

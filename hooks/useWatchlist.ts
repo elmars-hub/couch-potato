@@ -29,7 +29,7 @@ export function useWatchlist() {
       });
       return data as WatchlistItem[];
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 60 * 2,
     retry: false,
   });
 }

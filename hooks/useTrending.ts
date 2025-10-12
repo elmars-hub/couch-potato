@@ -1,4 +1,3 @@
-// src/hooks/useTrending.ts
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -11,8 +10,8 @@ export type MediaType = "movie" | "tv";
 
 interface TrendingResult {
   id: number;
-  title?: string; // movies
-  name?: string; // tv shows
+  title?: string;
+  name?: string;
   poster_path: string | null;
   media_type: MediaType;
 }

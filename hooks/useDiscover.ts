@@ -1,4 +1,3 @@
-// src/hooks/useDiscover.ts
 import { useQuery } from "@tanstack/react-query";
 import { discoverMovies } from "@/lib/tmdb/movies";
 import { discoverTv } from "@/lib/tmdb/tv";

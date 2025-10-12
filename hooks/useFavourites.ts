@@ -1,4 +1,3 @@
-// src/hooks/useFavorites.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { createClient as createBrowserClient } from "@/lib/supabase/client";

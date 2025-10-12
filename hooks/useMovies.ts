@@ -1,4 +1,3 @@
-// src/hooks/useMovies.ts
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import {
   getTrendingMovies,
