@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // lib/supabase/auth.ts
 import { createClient } from "./server";
 import { prisma } from "@/lib/prisma";

@@ -15,7 +15,10 @@ export async function fetchDetails(type: "movie" | "tv", id: number | string) {
 }
 
 // Backwards-compatible alias
-export async function getMediaDetails(type: "movie" | "tv", id: number | string) {
+export async function getMediaDetails(
+  type: "movie" | "tv",
+  id: number | string
+) {
   return fetchDetails(type, id);
 }
 
@@ -26,4 +29,3 @@ export async function fetchCredits(type: "movie" | "tv", id: number | string) {
 export async function fetchVideos(type: "movie" | "tv", id: number | string) {
   return fetchFromTMDB(`/${type}/${id}/videos`);
 }
-

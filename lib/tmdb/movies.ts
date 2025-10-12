@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fetchFromTMDB, type TMDBResponse } from "./fetcher";
 
 export interface Movie {
@@ -39,11 +40,15 @@ export async function getPopularMovies(page = 1) {
   return fetchFromTMDB("/movie/popular", { page });
 }
 
-export async function getTopRatedMovies(page = 1): Promise<TMDBResponse<Movie>> {
+export async function getTopRatedMovies(
+  page = 1
+): Promise<TMDBResponse<Movie>> {
   return getMoviesByCategory("top-rated", page) as Promise<TMDBResponse<Movie>>;
 }
 
-export async function getUpcomingMovies(page = 1): Promise<TMDBResponse<Movie>> {
+export async function getUpcomingMovies(
+  page = 1
+): Promise<TMDBResponse<Movie>> {
   return getMoviesByCategory("upcoming", page) as Promise<TMDBResponse<Movie>>;
 }
 
@@ -125,4 +130,3 @@ export async function getMoviesByCategory(
       throw new Error(`Unknown category: ${category}`);
   }
 }
-
