@@ -6,17 +6,28 @@ import HomeInfiniteFeed from "@/components/functional/home-infinite-feed";
 
 export const metadata: Metadata = {
   title: "Home",
-  description: "Discover the latest movies and TV shows. Browse trending content, popular films, and find your next favorite entertainment on Couch Potato.",
-  keywords: ["movies", "TV shows", "trending", "popular", "entertainment", "streaming", "discover"],
+  description:
+    "Discover the latest movies and TV shows. Browse trending content, popular films, and find your next favorite entertainment on Couch Potato.",
+  keywords: [
+    "movies",
+    "TV shows",
+    "trending",
+    "popular",
+    "entertainment",
+    "streaming",
+    "discover",
+  ],
   openGraph: {
     title: "Couch Potato - Discover Movies & TV Shows",
-    description: "Discover the latest movies and TV shows. Browse trending content, popular films, and find your next favorite entertainment.",
+    description:
+      "Discover the latest movies and TV shows. Browse trending content, popular films, and find your next favorite entertainment.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Couch Potato - Discover Movies & TV Shows",
-    description: "Discover the latest movies and TV shows. Browse trending content, popular films, and find your next favorite entertainment.",
+    description:
+      "Discover the latest movies and TV shows. Browse trending content, popular films, and find your next favorite entertainment.",
   },
 };
 
@@ -35,7 +46,7 @@ export default async function HomePage() {
     ]);
 
   return (
-    <main className="mx-auto ">
+    <main className="mx-auto">
       <HeroCarousel movies={movies} />
 
       <div className="space-y-8 pb-16">

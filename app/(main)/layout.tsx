@@ -10,7 +10,9 @@ export default function MainLayout({
       <Navbar />
       <main className="flex-1">{children}</main>
       <footer className="mt-10 py-8 text-center text-white/50 text-sm border-t border-white/10 bg-[#0f0f0f]">
-        <div className="max-w-[1800px] mx-auto px-4">© {new Date().getFullYear()} Couch Potato</div>
+        <div className="max-w-[1800px] mx-auto px-4">
+          © {new Date().getFullYear()} Couch Potato
+        </div>
       </footer>
     </div>
   );
